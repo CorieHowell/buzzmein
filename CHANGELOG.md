@@ -7,6 +7,24 @@ Versions: [Semantic Versioning](https://semver.org/)
 
 ---
 
+## [Unreleased]
+
+### Added
+- Next.js 14 project scaffold (App Router, TypeScript, Tailwind CSS v4)
+- shadcn/ui initialized with `base-nova` style
+- Supabase browser + server clients (`/lib/supabase/client.ts`, `server.ts`)
+- Auth middleware for route protection (`middleware.ts`, `/lib/supabase/middleware.ts`)
+- Hand-authored TypeScript types matching full schema (`/types/database.ts`, `/types/index.ts`)
+- `.env.example` with all required environment variables
+- `.claude/launch.json` for dev server preview
+- Warm modern visual theme — terracotta primary, warm off-white background, Plus Jakarta Sans headings
+
+### Schema
+- Migration `001_initial_schema.sql` — all 11 MVP tables, `handle_new_user()` trigger, RLS enabled on all tables, `is_group_member` / `is_group_admin` helper functions, full RLS policies
+- `supabase/seed.sql` — dev seed with 3 groups, members, topics, meeting, availability poll, RSVPs, bring list, messages
+
+---
+
 ## [Unreleased] — Pre-development
 
 ### Planning
