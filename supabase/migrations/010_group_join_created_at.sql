@@ -4,7 +4,10 @@
 --          so the join preview can show "Started Month YYYY".
 -- ============================================================
 
-CREATE OR REPLACE FUNCTION public.lookup_group_by_invite_code(code text)
+-- DROP required because CREATE OR REPLACE cannot change a function's return type
+DROP FUNCTION IF EXISTS public.lookup_group_by_invite_code(text);
+
+CREATE FUNCTION public.lookup_group_by_invite_code(code text)
 RETURNS TABLE (
   id              uuid,
   name            text,
