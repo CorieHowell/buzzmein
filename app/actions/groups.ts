@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { generateInviteCode } from "@/lib/utils";
-import type { GroupType } from "@/types";
 
 export async function createGroup(formData: FormData) {
   const supabase = await createClient();
@@ -13,11 +12,11 @@ export async function createGroup(formData: FormData) {
   if (!user) redirect("/login");
 
   const name = (formData.get("name") as string).trim();
-  const group_type = formData.get("group_type") as GroupType;
   const description = (formData.get("description") as string)?.trim() || null;
+  const cover_image_url = (formData.get("cover_image_url") as string)?.trim() || null;
 
-  if (!name || !group_type) {
-    throw new Error("Name and group type are required.");
+  if (!name) {
+    throw new Error("Group name is required.");
   }
 
   // Try up to 5 times to get a unique invite code
@@ -40,10 +39,18 @@ export async function createGroup(formData: FormData) {
   // (RLS SELECT policy requires membership, which doesn't exist yet)
   const groupId = crypto.randomUUID();
 
-  // Create the group
+  // Create the group (group_type defaults to 'custom'; join_mode defaults to approval_required)
   const { error: groupError } = await supabase
     .from("groups")
-    .insert({ id: groupId, name, group_type, description, invite_code, created_by: user.id });
+    .insert({
+      id: groupId,
+      name,
+      description,
+      cover_image_url,
+      invite_code,
+      created_by: user.id,
+      join_mode: "approval_required",
+    });
 
   if (groupError) throw groupError;
 
@@ -54,7 +61,7 @@ export async function createGroup(formData: FormData) {
 
   if (memberError) throw memberError;
 
-  redirect(`/group/${groupId}`);
+  redirect(`/group/${groupId}/setup/privacy`);
 }
 
 export async function leaveGroup(groupId: string) {
@@ -243,6 +250,27 @@ export async function removeMember(groupId: string, userId: string, block: boole
   }
 
   revalidatePath(`/group/${groupId}/members`);
+}
+
+/** Step 2 of the create-group wizard — saves the chosen join mode */
+export async function setupPrivacy(groupId: string, formData: FormData) {
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const join_mode = formData.get("join_mode") as "open" | "approval_required";
+  if (!join_mode) throw new Error("join_mode is required");
+
+  const { error } = await supabase
+    .from("groups")
+    .update({ join_mode })
+    .eq("id", groupId);
+
+  if (error) throw error;
+
+  revalidatePath(`/group/${groupId}/setup/privacy`);
+  redirect(`/group/${groupId}/setup/invite`);
 }
 
 /** Admin toggles the group's join mode */

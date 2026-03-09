@@ -1,23 +1,42 @@
-"use client";
-
+import { notFound, redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { setupPrivacy } from "@/app/actions/groups";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import { createGroup } from "@/app/actions/groups";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { GroupSetupProgress } from "@/components/group/group-setup-progress";
-import { GroupImageUpload } from "@/components/group/group-image-upload";
+import { PrivacySelector } from "@/components/group/privacy-selector";
 
-export default function NewGroupPage() {
+export default async function SetupPrivacyPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  // Verify this group exists and the current user is an admin
+  const { data: membership } = await supabase
+    .from("group_members")
+    .select("role")
+    .eq("group_id", id)
+    .eq("user_id", user.id)
+    .single();
+
+  if (!membership || membership.role !== "admin") notFound();
+
+  const setupWithId = setupPrivacy.bind(null, id);
+
   return (
     <div className="flex min-h-svh flex-col bg-background">
       {/* ── Header ──────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-10 flex h-14 items-center border-b border-border bg-background px-4">
         <Link
-          href="/dashboard"
+          href="/group/new"
           className="-ml-1 flex items-center gap-0.5 rounded-lg p-1.5 text-primary hover:bg-secondary transition-colors"
           aria-label="Back"
         >
@@ -31,37 +50,12 @@ export default function NewGroupPage() {
 
       {/* ── Body ────────────────────────────────────────────────────── */}
       <div className="flex flex-1 flex-col px-6 pt-8 pb-36">
-        <GroupSetupProgress step={1} />
+        <GroupSetupProgress step={2} />
 
-        <form action={createGroup} className="flex flex-col gap-6">
-          {/* Image upload */}
-          <GroupImageUpload />
+        <h1 className="mb-6 text-xl font-bold text-ink">Who can join?</h1>
 
-          {/* Name */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="name">Group name</Label>
-            <Input
-              id="name"
-              name="name"
-              placeholder="Page Turners, Stitch & Sip…"
-              required
-              autoFocus
-            />
-          </div>
-
-          {/* Description */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="description">
-              Description{" "}
-              <span className="text-muted-foreground font-normal">(optional)</span>
-            </Label>
-            <Textarea
-              id="description"
-              name="description"
-              placeholder="A little about your group…"
-              rows={3}
-            />
-          </div>
+        <form action={setupWithId} className="flex flex-col gap-4">
+          <PrivacySelector />
 
           {/* Sticky CTA */}
           <div
