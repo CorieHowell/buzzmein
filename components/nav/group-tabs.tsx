@@ -2,23 +2,26 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Info, Calendar, MessageCircle, Users } from "lucide-react";
+import { Info, Calendar, MessageCircle, Users, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
 
 interface GroupTabsProps {
   groupId: string;
-  /** Number of pending join requests — shows badge on Members tab for admins */
+  isAdmin?: boolean;
+  /** Number of pending join requests — shows dot on Members tab for admins */
   pendingCount?: number;
 }
 
-const TABS: {
+type TabDef = {
   label: string;
   Icon: LucideIcon;
   href: (id: string) => string;
   isActive: (pathname: string, href: string) => boolean;
   activeIconWrapClass?: string;
-}[] = [
+};
+
+const ALL_TABS: TabDef[] = [
   {
     label: "Details",
     Icon: Info,
@@ -44,17 +47,24 @@ const TABS: {
     href: (id) => `/group/${id}/members`,
     isActive: (pathname, href) => pathname.startsWith(href),
   },
+  {
+    label: "Settings",
+    Icon: Settings,
+    href: (id) => `/group/${id}/settings`,
+    isActive: (pathname, href) => pathname.startsWith(href),
+  },
 ];
 
-export function GroupTabs({ groupId, pendingCount = 0 }: GroupTabsProps) {
+export function GroupTabs({ groupId, isAdmin = false, pendingCount = 0 }: GroupTabsProps) {
   const pathname = usePathname();
+  const tabs = isAdmin ? ALL_TABS : ALL_TABS.filter((t) => t.label !== "Settings");
 
   return (
     <div className="flex border-b border-border">
-      {TABS.map((tab) => {
+      {tabs.map((tab) => {
         const href = tab.href(groupId);
         const active = tab.isActive(pathname, href);
-        const showBadge = tab.label === "Members" && pendingCount > 0;
+        const showDot = tab.label === "Members" && isAdmin && pendingCount > 0;
 
         return (
           <Link
@@ -67,7 +77,7 @@ export function GroupTabs({ groupId, pendingCount = 0 }: GroupTabsProps) {
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
-            {/* Icon with optional pending badge */}
+            {/* Icon with optional pending dot */}
             <div className="relative">
               <span className={cn(active ? tab.activeIconWrapClass : undefined)}>
                 <tab.Icon
@@ -77,10 +87,8 @@ export function GroupTabs({ groupId, pendingCount = 0 }: GroupTabsProps) {
                   aria-hidden
                 />
               </span>
-              {showBadge && (
-                <span className="absolute -top-2 -right-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-0.5 text-[9px] font-bold leading-none text-white">
-                  {pendingCount > 9 ? "9+" : pendingCount}
-                </span>
+              {showDot && (
+                <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-primary ring-1 ring-background" />
               )}
             </div>
             <span

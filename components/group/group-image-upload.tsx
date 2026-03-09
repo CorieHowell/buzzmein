@@ -4,9 +4,13 @@ import { useRef, useState } from "react";
 import { Camera, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
-export function GroupImageUpload() {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [uploadedUrl, setUploadedUrl] = useState<string>("");
+interface GroupImageUploadProps {
+  initialUrl?: string | null;
+}
+
+export function GroupImageUpload({ initialUrl }: GroupImageUploadProps) {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(initialUrl ?? null);
+  const [uploadedUrl, setUploadedUrl] = useState<string>(initialUrl ?? "");
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 

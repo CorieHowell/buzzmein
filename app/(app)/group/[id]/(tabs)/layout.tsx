@@ -54,7 +54,7 @@ export default async function GroupTabLayout({
 
       {/* Tabs sticky below group header (top-14 = 56px) */}
       <div className="sticky top-14 z-20 -mx-4 bg-background">
-        <GroupTabs groupId={id} pendingCount={pendingCount} />
+        <GroupTabs groupId={id} isAdmin={isAdmin} pendingCount={pendingCount} />
       </div>
 
       <div className="py-6">{children}</div>

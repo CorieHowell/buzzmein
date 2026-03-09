@@ -25,8 +25,12 @@ const OPTIONS: {
   },
 ];
 
-export function PrivacySelector() {
-  const [selected, setSelected] = useState<JoinMode>("approval_required");
+interface PrivacySelectorProps {
+  initialMode?: JoinMode;
+}
+
+export function PrivacySelector({ initialMode = "approval_required" }: PrivacySelectorProps) {
+  const [selected, setSelected] = useState<JoinMode>(initialMode);
 
   return (
     <div className="flex flex-col gap-3">

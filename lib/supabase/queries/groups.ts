@@ -140,7 +140,7 @@ export async function getPendingJoinRequests(groupId: string) {
       id,
       user_id,
       requested_at,
-      profiles (
+      profiles!user_id (
         id,
         display_name,
         avatar_url

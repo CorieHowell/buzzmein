@@ -9,7 +9,6 @@ import {
 } from "@/lib/supabase/queries/groups";
 import { approveJoinRequest, rejectJoinRequest } from "@/app/actions/groups";
 import { Avatar } from "@/components/ui/avatar";
-import { JoinModeToggle } from "@/components/group/join-mode-toggle";
 import { RemoveMemberButton } from "@/components/group/remove-member-button";
 
 function formatJoinedDate(isoDate: string): string {
@@ -42,9 +41,9 @@ export default async function MembersPage({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  let group;
+  // Verify group exists; throws → notFound() if not (also enforces RLS membership)
   try {
-    group = await getGroupById(id);
+    await getGroupById(id);
   } catch {
     notFound();
   }
@@ -59,8 +58,6 @@ export default async function MembersPage({
 
   const admins = members.filter((m) => m.role === "admin");
   const regularMembers = members.filter((m) => m.role === "member");
-
-  const joinMode = group.join_mode as "open" | "approval_required";
 
   return (
     <div className="flex flex-col gap-6">
@@ -135,16 +132,6 @@ export default async function MembersPage({
               );
             })}
           </div>
-        </section>
-      )}
-
-      {/* ── Join settings (admin only) ──────────────────────────────── */}
-      {isAdmin && (
-        <section className="flex flex-col gap-2">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Join settings
-          </h2>
-          <JoinModeToggle groupId={id} initialMode={joinMode} />
         </section>
       )}
 

@@ -273,6 +273,42 @@ export async function setupPrivacy(groupId: string, formData: FormData) {
   redirect(`/group/${groupId}/setup/invite`);
 }
 
+/** Admin updates group details (name, description, image, join mode) */
+export async function updateGroup(groupId: string, formData: FormData) {
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  // Verify current user is an admin of this group
+  const { data: membership } = await supabase
+    .from("group_members")
+    .select("role")
+    .eq("group_id", groupId)
+    .eq("user_id", user.id)
+    .single();
+
+  if (membership?.role !== "admin") throw new Error("Not authorized");
+
+  const name = (formData.get("name") as string).trim();
+  const description = (formData.get("description") as string)?.trim() || null;
+  const cover_image_url = (formData.get("cover_image_url") as string)?.trim() || null;
+  const join_mode = formData.get("join_mode") as "open" | "approval_required";
+
+  if (!name) throw new Error("Group name is required.");
+
+  const { error } = await supabase
+    .from("groups")
+    .update({ name, description, cover_image_url, join_mode })
+    .eq("id", groupId);
+
+  if (error) throw error;
+
+  revalidatePath(`/group/${groupId}`);
+  revalidatePath(`/group/${groupId}/settings`);
+  redirect(`/group/${groupId}/settings`);
+}
+
 /** Admin toggles the group's join mode */
 export async function updateJoinMode(
   groupId: string,
