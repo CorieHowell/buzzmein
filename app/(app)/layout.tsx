@@ -16,17 +16,25 @@ export default async function AppLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 bg-white border-b border-border">
-        <div className="mx-auto flex h-14 max-w-lg items-center justify-between px-4">
-          <Link href="/home" className="flex items-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/BuzzLogo_Horizontal.svg"
-              alt="Buzz Me In"
-              className="h-7 w-auto"
-              draggable={false}
-            />
-          </Link>
-          <HeaderChatButton />
+        <div className="mx-auto grid h-14 max-w-lg grid-cols-3 items-center px-4">
+          {/* left col — empty spacer matching the right icon width */}
+          <div />
+          {/* center col — logo truly centered */}
+          <div className="flex justify-center">
+            <Link href="/home">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/BuzzLogo_Horizontal.svg"
+                alt="Buzz Me In"
+                className="h-7 w-auto"
+                draggable={false}
+              />
+            </Link>
+          </div>
+          {/* right col — chat button */}
+          <div className="flex justify-end">
+            <HeaderChatButton />
+          </div>
         </div>
       </header>
       {/* pb-16 leaves room for the bottom nav bar */}

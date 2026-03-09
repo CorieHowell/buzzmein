@@ -15,8 +15,8 @@
     --popover: oklch(0.99 0.005 289);
     --popover-foreground: oklch(0.12 0.065 289);
 
-    /* Core purple — buttons, links, key UI */
-    --primary: oklch(0.44 0.155 289);
+    /* Core purple — buttons, links, key UI (purple-slate) */
+    --primary: #495085;
     --primary-foreground: oklch(0.99 0.003 289);
 
     /* Soft purple — secondary fills */
@@ -36,10 +36,10 @@
     /* Divider — purple-tinted borders */
     --border: oklch(0.88 0.022 289);
     --input: oklch(0.88 0.022 289);
-    --ring: oklch(0.44 0.155 289);
+    --ring: #495085;
 
     /* Chart — purple palette */
-    --chart-1: oklch(0.44 0.155 289);
+    --chart-1: #495085;
     --chart-2: oklch(0.61 0.100 289);
     --chart-3: oklch(0.83 0.165 88);
     --chart-4: oklch(0.55 0.12 200);
@@ -60,7 +60,7 @@
     /* ── Named palette tokens ─────────────────────────────────────────────── */
     --ink:       oklch(0.12 0.065 289);
     --deep:      oklch(0.23 0.105 289);
-    --core:      oklch(0.44 0.155 289);
+    --core:      #495085;
     --mid:       oklch(0.61 0.100 289);
     --soft:      oklch(0.79 0.065 289);
     --whisper:   oklch(0.95 0.025 289);
