@@ -27,7 +27,7 @@ export function BottomNav() {
 
   return (
     <div
-      className="fixed left-4 right-4 z-50 rounded-2xl bg-white shadow-[0_4px_24px_rgba(0,0,0,0.07)]"
+      className="fixed left-4 right-4 z-50 rounded-full bg-white shadow-[0_4px_24px_rgba(0,0,0,0.07)]"
       style={{ bottom: "max(1rem, calc(env(safe-area-inset-bottom) + 0.5rem))" }}
     >
       <div className="mx-auto flex max-w-lg items-center justify-around px-3 py-3">
