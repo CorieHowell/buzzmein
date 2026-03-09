@@ -9,6 +9,25 @@ Versions: [Semantic Versioning](https://semver.org/)
 
 ## [Unreleased]
 
+### Added — 2026-03-08 (branding, PWA, icons)
+
+- **PWA manifest** (`app/manifest.ts`) — `display: standalone`, `start_url: "/"`, portrait orientation, brand colors, icon references; enables full-screen mode when added to iOS/Android home screen
+- **PWA meta tags** (`app/layout.tsx`) — `apple-mobile-web-app-capable`, `statusBarStyle: default`, `Viewport` export with `viewportFit: cover` and `themeColor: #495085`
+- **App icons** — `apple-touch-icon.png` (180×180), `icon-192.png`, `icon-512.png`, `favicon.png` (32×32) in `/public/`
+- **OG / social sharing image** — `public/og-image.png` (1200×630); wired into `openGraph` and `twitter` metadata
+- **Horizontal logo** (`public/BuzzLogo_Horizontal.svg`) — 445×89 wordmark used in the app header
+- **Smart root route** (`app/page.tsx`) — server-side auth check: logged-in users redirect to `/home`, everyone else to `/login`
+
+### Changed — 2026-03-08 (branding, PWA, icons)
+
+- **App header** (`app/(app)/layout.tsx`) — replaced "Buzz Me In" text link with `BuzzLogo_Horizontal.svg`; switched to 3-column grid so logo is truly centered independent of the chat button width
+- **Primary colour** (`app/globals.css`) — `--primary`, `--core`, `--ring`, `--chart-1` all updated from OKLCH core purple to `#495085` (purple-slate) to match brand palette
+
+### Fixed — 2026-03-08
+
+- **Old splash still showing on Vercel** — `app/page.tsx` was the original text-based splash and was never replaced; root now routes through auth check
+- **PWA manifest type error** — `purpose: "any maskable"` is not a valid TypeScript union value; split into two separate icon entries with `purpose: "any"` and `purpose: "maskable"`
+
 ### Added
 - **Splash screen** (`app/(auth)/login/page.tsx`) — full-screen purple landing page with `BuzzLogo.svg` logo and `BuzzFriends1.svg` illustration; replaces the old sign-in/sign-up toggle as the initial auth view
 - `public/BuzzLogo.svg` — wordmark logo asset
