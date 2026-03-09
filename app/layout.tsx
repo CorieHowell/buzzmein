@@ -54,7 +54,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${poppins.variable} ${geistMono.variable}`}>
-      <body className="antialiased overflow-x-hidden">
+      <body className="antialiased overflow-x-clip">
         {children}
       </body>
     </html>

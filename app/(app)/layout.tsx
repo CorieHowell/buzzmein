@@ -51,7 +51,7 @@ export default async function AppLayout({
       </header>
       {/* bottom padding clears the floating nav (height ~56px) + gap + safe area */}
       <main
-        className="mx-auto w-full max-w-lg flex-1 overflow-x-hidden px-4 py-6"
+        className="mx-auto w-full max-w-lg flex-1 overflow-x-clip px-4 py-6"
         style={{ paddingBottom: "calc(5rem + env(safe-area-inset-bottom))" }}
       >
         {children}
