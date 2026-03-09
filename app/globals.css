@@ -67,6 +67,12 @@
     --glow:      oklch(0.83 0.165 88);
     --glow-warm: oklch(0.78 0.180 83);
     --glow-pale: oklch(0.96 0.060 96);
+
+    /* ── Splash / brand purples ──────────────────────────────────────────── */
+    /* Used in the landing/auth screen and for deep brand moments            */
+    --purple-rich:  #352363;  /* Darkest CTA purple — buttons, key actions  */
+    --purple-slate: #495085;  /* Upper splash background                    */
+    --purple-haze:  #8382AD;  /* Lower splash / button panel background     */
   }
 
   .dark {
@@ -167,6 +173,11 @@
   --color-glow:       var(--glow);
   --color-glow-warm:  var(--glow-warm);
   --color-glow-pale:  var(--glow-pale);
+
+  /* Splash / brand purples */
+  --color-purple-rich:  var(--purple-rich);
+  --color-purple-slate: var(--purple-slate);
+  --color-purple-haze:  var(--purple-haze);
 }
 
 @layer base {

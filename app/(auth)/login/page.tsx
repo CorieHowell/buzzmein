@@ -86,44 +86,45 @@ export default function LoginPage() {
   // ── Splash ──────────────────────────────────────────────────────────────────
   if (mode === "splash") {
     return (
-      <div className="relative flex min-h-svh flex-col overflow-hidden bg-deep">
-        {/* Logo */}
-        <div className="flex-shrink-0 px-8 pt-16">
+      <div className="flex min-h-svh flex-col bg-purple-slate">
+        {/* Logo — centered, 50px padding on top / left / right */}
+        <div className="px-[50px] pt-[50px]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/BuzzLogo.svg"
             alt="Buzz Me In"
-            className="w-64"
+            className="w-full"
             draggable={false}
           />
         </div>
 
-        {/* Illustration — bottom-aligned, fills remaining space */}
-        <div className="flex flex-1 items-end overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/BuzzFriends1.svg"
-            alt=""
-            aria-hidden="true"
-            className="w-full select-none"
-            draggable={false}
-          />
-        </div>
+        {/* Spacer — pushes illustration toward the bottom */}
+        <div className="flex-1" />
 
-        {/* Buttons */}
+        {/* Illustration — full width, blends with bg-purple-slate above */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/BuzzFriends1.svg"
+          alt=""
+          aria-hidden="true"
+          className="block w-full select-none"
+          draggable={false}
+        />
+
+        {/* Button panel — lighter purple, 24px below illustration, 16px side padding */}
         <div
-          className="flex-shrink-0 flex flex-col gap-3 px-6 pb-10"
+          className="bg-purple-haze px-4 pt-6 flex flex-col gap-3"
           style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 2.5rem)" }}
         >
           <button
             onClick={() => goTo("signup")}
-            className="h-14 w-full rounded-[20px] bg-[oklch(0.15_0.08_289)] text-base font-semibold text-white transition-opacity active:opacity-80"
+            className="h-14 w-full rounded-[20px] bg-purple-rich text-base font-semibold text-white transition-opacity active:opacity-80"
           >
             Create Account
           </button>
           <button
             onClick={() => goTo("signin")}
-            className="h-14 w-full rounded-[20px] border border-white/25 text-base font-semibold text-white transition-opacity active:opacity-80"
+            className="h-14 w-full rounded-[20px] border border-purple-rich text-base font-semibold text-purple-rich transition-opacity active:opacity-80"
           >
             Sign In
           </button>
