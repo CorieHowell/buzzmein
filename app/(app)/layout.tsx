@@ -17,11 +17,14 @@ export default async function AppLayout({
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 bg-white border-b border-border">
         <div className="mx-auto flex h-14 max-w-lg items-center justify-between px-4">
-          <Link
-            href="/home"
-            className="text-base font-bold tracking-tight text-primary"
-          >
-            Buzz Me In
+          <Link href="/home" className="flex items-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/BuzzLogo_Horizontal.svg"
+              alt="Buzz Me In"
+              className="h-7 w-auto"
+              draggable={false}
+            />
           </Link>
           <HeaderChatButton />
         </div>
