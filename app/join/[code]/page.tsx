@@ -4,14 +4,15 @@ import {
   getGroupByInviteCode,
   getGroupMemberCount,
   isAlreadyMember,
+  getMyJoinRequest,
 } from "@/lib/supabase/queries/groups";
-import { joinGroup } from "@/app/actions/groups";
+import { joinGroup, requestToJoin } from "@/app/actions/groups";
 import { buttonVariants } from "@/components/ui/button";
 import { groupTypeLabel, groupTypeEmoji } from "@/lib/utils";
 import type { GroupType } from "@/types";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ChevronLeft, Users, Sparkles, CalendarDays } from "lucide-react";
+import { ChevronLeft, Users, Sparkles, CalendarDays, Clock } from "lucide-react";
 
 export default async function JoinPage({
   params,
@@ -23,7 +24,6 @@ export default async function JoinPage({
 
   if (!group) notFound();
 
-  // Auth check — page is public, but member count needs admin client
   const supabase = await createClient();
   const {
     data: { user },
@@ -36,13 +36,30 @@ export default async function JoinPage({
   }
 
   const memberCount = await getGroupMemberCount(group.id);
+  const myRequest = user ? await getMyJoinRequest(group.id) : null;
+
+  const joinMode = group.join_mode as "open" | "approval_required";
 
   const joinWithId = joinGroup.bind(null, group.id);
+  const requestWithId = requestToJoin.bind(null, group.id);
 
   const startedLabel = new Date(group.created_at).toLocaleDateString("en-US", {
     month: "long",
     year: "numeric",
   });
+
+  // Determine CTA state for logged-in non-members
+  type CtaState = "join" | "request" | "pending" | "blocked";
+  let ctaState: CtaState = "join";
+  if (user) {
+    if (joinMode === "open") {
+      ctaState = myRequest?.status === "blocked" ? "blocked" : "join";
+    } else {
+      if (myRequest?.status === "blocked") ctaState = "blocked";
+      else if (myRequest?.status === "pending") ctaState = "pending";
+      else ctaState = "request";
+    }
+  }
 
   return (
     <div className="flex min-h-svh flex-col bg-background">
@@ -105,6 +122,12 @@ export default async function JoinPage({
             <CalendarDays size={18} strokeWidth={1.5} className="shrink-0 text-muted-foreground" />
             <span>Started {startedLabel}</span>
           </li>
+          {joinMode === "approval_required" && (
+            <li className="flex items-center gap-3 text-sm text-ink">
+              <Clock size={18} strokeWidth={1.5} className="shrink-0 text-muted-foreground" />
+              <span>Admin approval required to join</span>
+            </li>
+          )}
         </ul>
       </div>
 
@@ -113,18 +136,8 @@ export default async function JoinPage({
         className="fixed bottom-0 left-0 right-0 border-t border-border bg-background px-6 pt-4"
         style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 1.5rem)" }}
       >
-        {user ? (
-          /* Logged-in: one-tap join */
-          <form action={joinWithId}>
-            <button
-              type="submit"
-              className={buttonVariants({ size: "lg", className: "w-full" })}
-            >
-              Join group
-            </button>
-          </form>
-        ) : (
-          /* Not logged in: create account (primary) + sign in (secondary) */
+        {!user ? (
+          /* Not logged in */
           <div className="flex flex-col gap-2">
             <Link
               href={`/login?mode=signup&next=/join/${code}`}
@@ -142,6 +155,41 @@ export default async function JoinPage({
             >
               Already have an account? Sign in
             </Link>
+          </div>
+        ) : ctaState === "join" ? (
+          /* Open group — direct join */
+          <form action={joinWithId}>
+            <button
+              type="submit"
+              className={buttonVariants({ size: "lg", className: "w-full" })}
+            >
+              Join group
+            </button>
+          </form>
+        ) : ctaState === "request" ? (
+          /* Approval required — request to join */
+          <form action={requestWithId}>
+            <button
+              type="submit"
+              className={buttonVariants({ size: "lg", className: "w-full" })}
+            >
+              Request to join
+            </button>
+          </form>
+        ) : ctaState === "pending" ? (
+          /* Request already submitted */
+          <div className="flex items-center justify-center gap-2 rounded-2xl bg-muted px-4 py-3.5">
+            <Clock size={16} className="text-muted-foreground" />
+            <p className="text-sm font-medium text-muted-foreground">
+              Request pending · Waiting for admin approval
+            </p>
+          </div>
+        ) : (
+          /* Blocked */
+          <div className="flex items-center justify-center rounded-2xl bg-muted px-4 py-3.5">
+            <p className="text-sm font-medium text-muted-foreground">
+              You can&apos;t join this group
+            </p>
           </div>
         )}
       </div>

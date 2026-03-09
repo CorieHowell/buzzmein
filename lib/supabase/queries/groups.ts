@@ -119,6 +119,46 @@ export async function isAlreadyMember(groupId: string, userId: string) {
   return !!data;
 }
 
+// Pending join requests for a group (admin-only — RLS enforced)
+export async function getPendingJoinRequests(groupId: string) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("group_join_requests")
+    .select(`
+      id,
+      user_id,
+      requested_at,
+      profiles (
+        id,
+        display_name,
+        avatar_url
+      )
+    `)
+    .eq("group_id", groupId)
+    .eq("status", "pending")
+    .order("requested_at", { ascending: true });
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+// Current user's own join request for a group (any status)
+export async function getMyJoinRequest(groupId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data } = await supabase
+    .from("group_join_requests")
+    .select("id, status")
+    .eq("group_id", groupId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  return data ?? null;
+}
+
 // Get the current user's role in a group
 export async function getUserRole(
   groupId: string

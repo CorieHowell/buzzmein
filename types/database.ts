@@ -96,6 +96,7 @@ export type Database = {
           invite_code: string;
           created_by: string | null;
           created_at: string;
+          join_mode: "open" | "approval_required";
         };
         Insert: {
           id?: string;
@@ -112,6 +113,7 @@ export type Database = {
           invite_code: string;
           created_by?: string | null;
           created_at?: string;
+          join_mode?: "open" | "approval_required";
         };
         Update: {
           id?: string;
@@ -128,6 +130,7 @@ export type Database = {
           invite_code?: string;
           created_by?: string | null;
           created_at?: string;
+          join_mode?: "open" | "approval_required";
         };
         Relationships: [
           {
@@ -171,6 +174,51 @@ export type Database = {
           },
           {
             foreignKeyName: "group_members_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      group_join_requests: {
+        Row: {
+          id: string;
+          group_id: string;
+          user_id: string;
+          status: "pending" | "approved" | "rejected" | "blocked";
+          requested_at: string;
+          resolved_at: string | null;
+          resolved_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          group_id: string;
+          user_id: string;
+          status?: "pending" | "approved" | "rejected" | "blocked";
+          requested_at?: string;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+        };
+        Update: {
+          id?: string;
+          group_id?: string;
+          user_id?: string;
+          status?: "pending" | "approved" | "rejected" | "blocked";
+          requested_at?: string;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "group_join_requests_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "groups";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "group_join_requests_user_id_fkey";
             columns: ["user_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
@@ -579,6 +627,7 @@ export type Database = {
           description: string | null;
           cover_image_url: string | null;
           created_at: string;
+          join_mode: string;
         }>;
       };
     };
