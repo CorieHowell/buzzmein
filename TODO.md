@@ -239,7 +239,7 @@ Prioritized build order for MVP. Work top to bottom — each phase builds on the
 - [ ] Annual "best topic" vote
 - [ ] Member profiles with history
 - [ ] Admin: remove members, transfer ownership
-- [ ] Google OAuth login
+- [ ] Google OAuth ("Continue with Google") — ~30 min total: 15 min Google Cloud Console setup (OAuth credentials + redirect URI), 2 min Supabase Dashboard to enable provider, then ~25 lines of code changes in `app/(auth)/login/page.tsx` + a new migration `008_google_oauth_profile.sql` to capture Google avatar. The `/auth/callback` route already handles the redirect — no changes needed there.
 - [ ] Dark mode
 - [ ] PWA / Add to Home Screen
 - [ ] Native app (React Native)
