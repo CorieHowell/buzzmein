@@ -4,8 +4,9 @@ import { createClient } from "@/lib/supabase/server";
 import { getGroupById, getGroupMembers, getUserRole } from "@/lib/supabase/queries/groups";
 import { getNextMeeting } from "@/lib/supabase/queries/meetings";
 import { getBacklogTopics } from "@/lib/supabase/queries/topics";
-import { formatDateTime } from "@/lib/utils";
+import { formatDateTime, groupTypeLabel, groupTypeEmoji } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import type { GroupType } from "@/types";
 import { CopyButton } from "@/components/group/copy-button";
 import { Avatar } from "@/components/ui/avatar";
 import { LeaveGroupButton } from "@/components/group/leave-group-button";
@@ -50,6 +51,24 @@ export default async function GroupHomePage({
 
   return (
     <div className="flex flex-col gap-8">
+      {/* ── Group info ────────────────────────────────────────────── */}
+      <section className="flex flex-col gap-2">
+        <span className="text-5xl leading-none">
+          {groupTypeEmoji(group.group_type as GroupType)}
+        </span>
+        <h1 className="mt-2 text-2xl font-bold leading-tight text-ink">
+          {group.name}
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          {groupTypeLabel(group.group_type as GroupType)}{" "}
+          <span className="text-muted-foreground/50">·</span>{" "}
+          {members.length} {members.length === 1 ? "member" : "members"}
+        </p>
+        {group.description && (
+          <p className="text-sm text-muted-foreground">{group.description}</p>
+        )}
+      </section>
+
       {/* ── Next meetup ───────────────────────────────────────────── */}
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">

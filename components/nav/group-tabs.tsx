@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Calendar, MessageCircle } from "lucide-react";
+import { Info, Calendar, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
 
@@ -15,12 +15,16 @@ const TABS: {
   Icon: LucideIcon;
   href: (id: string) => string;
   isActive: (pathname: string, href: string) => boolean;
+  /** Extra classes applied to the icon wrapper when active + filled */
+  activeIconWrapClass?: string;
 }[] = [
   {
-    label: "Home",
-    Icon: Home,
+    label: "Details",
+    Icon: Info,
     href: (id) => `/group/${id}`,
     isActive: (pathname, href) => pathname === href,
+    // The filled Info circle is all-purple — make inner strokes white so the "i" shows
+    activeIconWrapClass: "[&_path]:stroke-white [&_line]:stroke-white",
   },
   {
     label: "Meetings",
@@ -56,12 +60,14 @@ export function GroupTabs({ groupId }: GroupTabsProps) {
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
-            <tab.Icon
-              size={18}
-              strokeWidth={active ? 2 : 1.5}
-              fill={active ? "currentColor" : "none"}
-              aria-hidden
-            />
+            <span className={cn(active ? tab.activeIconWrapClass : undefined)}>
+              <tab.Icon
+                size={18}
+                strokeWidth={active ? 2 : 1.5}
+                fill={active ? "currentColor" : "none"}
+                aria-hidden
+              />
+            </span>
             <span
               className={cn(
                 "text-[10px] leading-none tracking-wide",
