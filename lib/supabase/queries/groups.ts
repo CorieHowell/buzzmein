@@ -104,8 +104,7 @@ export async function getGroupMembers(groupId: string) {
         id,
         display_name,
         avatar_url,
-        email,
-        contact_info_public
+        email
       )
     `)
     .eq("group_id", groupId)
@@ -130,6 +129,8 @@ export async function isAlreadyMember(groupId: string, userId: string) {
 }
 
 // Pending join requests for a group (admin-only — RLS enforced)
+// Returns [] gracefully if the group_join_requests table doesn't exist yet
+// (i.e. migration 011 hasn't been applied to the hosted DB).
 export async function getPendingJoinRequests(groupId: string) {
   const supabase = await createClient();
 
@@ -149,7 +150,10 @@ export async function getPendingJoinRequests(groupId: string) {
     .eq("status", "pending")
     .order("requested_at", { ascending: true });
 
-  if (error) throw error;
+  if (error) {
+    console.error("getPendingJoinRequests:", error.message);
+    return [];
+  }
   return data ?? [];
 }
 

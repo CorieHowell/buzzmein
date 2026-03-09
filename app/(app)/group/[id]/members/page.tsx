@@ -185,16 +185,6 @@ export default async function MembersPage({
                           </span>
                         )}
                       </p>
-                      {(profile as { contact_info_public?: boolean })
-                        .contact_info_public &&
-                        profile.email && (
-                          <a
-                            href={`mailto:${profile.email}`}
-                            className="text-xs text-primary hover:underline"
-                          >
-                            {profile.email}
-                          </a>
-                        )}
                     </div>
                     <div className="flex flex-col items-end gap-1">
                       <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
@@ -252,16 +242,7 @@ export default async function MembersPage({
                           </span>
                         )}
                       </p>
-                      {(profile as { contact_info_public?: boolean })
-                        .contact_info_public &&
-                        profile.email && (
-                          <a
-                            href={`mailto:${profile.email}`}
-                            className="text-xs text-primary hover:underline"
-                          >
-                            {profile.email}
-                          </a>
-                        )}
+
                     </div>
                     <span className="text-xs text-muted-foreground shrink-0">
                       Joined {formatJoinedDate(m.joined_at)}

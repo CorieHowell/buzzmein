@@ -23,7 +23,7 @@ export function GroupHeader({ groupName }: GroupHeaderProps) {
           </div>
           {/* center — group name */}
           <div className="flex justify-center">
-            <p className="truncate text-sm font-semibold text-ink">
+            <p className="truncate text-base font-semibold text-ink">
               {groupName}
             </p>
           </div>
