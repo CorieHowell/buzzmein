@@ -51,7 +51,12 @@ export async function getGroupByInviteCode(code: string) {
     .eq("invite_code", code.toUpperCase())
     .single();
 
-  if (error) return null;
+  if (error) {
+    // PGRST116 = "no rows returned" — invite code simply doesn't exist
+    if (error.code === "PGRST116") return null;
+    // Any other error (missing service key, network, auth) should surface visibly
+    throw new Error(`getGroupByInviteCode failed: ${error.message}`);
+  }
   return data;
 }
 
