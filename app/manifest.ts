@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Buzz Me In",
     short_name: "Buzz Me In",
     description: "Get your crew together.",
-    start_url: "/login",
+    start_url: "/",
     display: "standalone",
     orientation: "portrait",
     background_color: "#ffffff",
