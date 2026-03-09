@@ -135,7 +135,7 @@ export function PostDetail({
   }
 
   return (
-    <div className="flex flex-col" style={{ minHeight: "calc(100svh - 120px)" }}>
+    <div className="flex flex-col overflow-x-hidden" style={{ minHeight: "calc(100svh - 120px)" }}>
       {/* Back button — sticky below the app header */}
       <div className="sticky top-14 z-10 -mx-4 bg-background px-4 py-2 border-b border-border mb-4">
         <button
