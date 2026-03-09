@@ -137,7 +137,7 @@ export function PostDetail({
   return (
     <div className="flex flex-col overflow-x-clip" style={{ minHeight: "calc(100svh - 120px)" }}>
       {/* Back button — sticky below app header + group tabs (~56px + ~48px = 104px) */}
-      <div className="sticky top-[6.5rem] z-10 bg-background py-2 border-b border-border mb-4">
+      <div className="sticky top-[6.5rem] z-10 bg-background py-3 border-b border-border mb-4">
         <button
           onClick={() => router.back()}
           className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink transition-colors"
