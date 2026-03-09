@@ -578,6 +578,7 @@ export type Database = {
           group_type: string;
           description: string | null;
           cover_image_url: string | null;
+          created_at: string;
         }>;
       };
     };
