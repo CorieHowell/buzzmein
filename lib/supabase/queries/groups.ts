@@ -2,6 +2,12 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Group, GroupMember } from "@/types";
 
+// ---------------------------------------------------------------------------
+// Note on clients:
+//   createClient()      — server client, uses anon key + user session (RLS enforced)
+//   createAdminClient() — service-role client, bypasses RLS (use sparingly)
+// ---------------------------------------------------------------------------
+
 // All groups the current user belongs to, with member count
 export async function getUserGroups() {
   const supabase = await createClient();
@@ -41,23 +47,21 @@ export async function getGroupById(id: string) {
   return data as Group;
 }
 
-// Look up a group by invite code (used on join page — bypasses RLS intentionally)
+// Look up a group by invite code (used on join page — before the user is a member)
+// Uses a SECURITY DEFINER RPC function so it works for both anon visitors
+// and authenticated non-members, without needing the service-role key.
 export async function getGroupByInviteCode(code: string) {
-  const supabase = createAdminClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from("groups")
-    .select("id, name, group_type, description, cover_image_url")
-    .eq("invite_code", code.toUpperCase())
-    .single();
+    .rpc("lookup_group_by_invite_code", { code })
+    .maybeSingle();
 
   if (error) {
-    // PGRST116 = "no rows returned" — invite code simply doesn't exist
-    if (error.code === "PGRST116") return null;
-    // Any other error (missing service key, network, auth) should surface visibly
     throw new Error(`getGroupByInviteCode failed: ${error.message}`);
   }
-  return data;
+  // maybeSingle() returns null when the function returns 0 rows
+  return data ?? null;
 }
 
 // Member count for a group (bypasses RLS so join page can show count before user joins)

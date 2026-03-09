@@ -570,6 +570,16 @@ export type Database = {
         Args: { gid: string };
         Returns: boolean;
       };
+      lookup_group_by_invite_code: {
+        Args: { code: string };
+        Returns: Array<{
+          id: string;
+          name: string;
+          group_type: string;
+          description: string | null;
+          cover_image_url: string | null;
+        }>;
+      };
     };
     Enums: Record<string, never>;
   };
