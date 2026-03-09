@@ -11,6 +11,12 @@ Versions: [Semantic Versioning](https://semver.org/)
 
 ### Fixed
 
+- **Vote card href** (`lib/supabase/queries/feed.ts`) — `vote_needed` feed items now link to `/group/[id]/topics` instead of the group home tab so tapping them lands on the voting UI
+- **Reply input positioning** (`components/posts/post-detail.tsx`) — changed `sticky bottom-20` → `sticky bottom-0` with `env(safe-area-inset-bottom)` padding; bottom nav auto-hides on `/group/*` routes so no offset was needed; removed the dead zone below the input on iOS
+- **Reply flex layout** (`components/posts/post-detail.tsx`) — added `w-full overflow-hidden` to the flex row and `min-w-0` on the textarea so the send button no longer gets pushed off-screen when the mobile keyboard appears
+- **Back button** (`components/posts/post-detail.tsx`) — wrapped in `sticky top-14 z-10` bar so it stays visible while reading long reply threads
+- **FAB position** (`components/posts/new-post-drawer.tsx`) — removed `bottom-24` (was clearing a nav bar that auto-hides on group pages); now uses `style={{ bottom: "max(env(safe-area-inset-bottom, 0px), 1.5rem)" }}` so it sits near the screen edge on all devices
+- **Group tabs sticky** (`app/(app)/group/[id]/(tabs)/layout.tsx`) — wrapped `<GroupTabs>` in `sticky top-14 z-20 bg-background` div so tabs remain visible as the user scrolls group content
 - **Avatar upload** (`components/profile/avatar-upload.tsx`) — root cause was React StrictMode double-mounting effects: `useRef(URL.createObjectURL(file))` ran at render time, StrictMode's first cleanup immediately revoked it, `<img>` loaded a dead URL, `onLoad` never fired, `nsRef` stayed null, `handleConfirm` bailed silently — uploads never started. Fix: moved blob URL creation into a `useEffect` so it survives the StrictMode cycle.
 - **`components/ui/avatar.tsx`** — replaced `next/image` with plain `<img>` to support `blob:` preview URLs
 - **`next.config.ts`** — added `*.supabase.co` to `images.remotePatterns`

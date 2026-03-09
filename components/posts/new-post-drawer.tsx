@@ -90,11 +90,12 @@ export function NewPostDrawer({
 
   return (
     <>
-      {/* FAB */}
+      {/* FAB — sits just above the safe-area inset; no bottom nav on group pages */}
       <button
         onClick={() => setOpen(true)}
         aria-label="New post"
-        className="fixed bottom-24 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-lg transition-transform active:scale-95"
+        className="fixed right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-lg transition-transform active:scale-95"
+        style={{ bottom: "max(env(safe-area-inset-bottom, 0px), 1.5rem)" }}
       >
         <PenLine size={22} strokeWidth={2} />
       </button>

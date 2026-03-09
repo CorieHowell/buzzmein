@@ -136,14 +136,16 @@ export function PostDetail({
 
   return (
     <div className="flex flex-col" style={{ minHeight: "calc(100svh - 120px)" }}>
-      {/* Back button */}
-      <button
-        onClick={() => router.back()}
-        className="mb-4 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink transition-colors"
-      >
-        <ArrowLeft size={16} strokeWidth={1.5} />
-        Back
-      </button>
+      {/* Back button — sticky below the app header */}
+      <div className="sticky top-14 z-10 -mx-4 bg-background px-4 py-2 border-b border-border mb-4">
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink transition-colors"
+        >
+          <ArrowLeft size={16} strokeWidth={1.5} />
+          Back
+        </button>
+      </div>
 
       {/* ── Original post ── */}
       <div className="rounded-xl bg-gray-100 p-4 mb-4">
@@ -210,8 +212,13 @@ export function PostDetail({
       </div>
 
       {/* ── Reply input ── */}
-      <div className="sticky bottom-20 bg-white pt-3 pb-2 border-t border-border">
-        <div className="flex items-end gap-2">
+      {/* sticky bottom-0: no bottom nav on group pages so no offset needed */}
+      <div
+        className="sticky bottom-0 bg-background pt-3 border-t border-border"
+        style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 8px)" }}
+      >
+        {/* w-full + overflow-hidden prevents the flex row from blowing out on mobile */}
+        <div className="flex w-full items-end gap-2 overflow-hidden">
           <textarea
             ref={textareaRef}
             value={replyText}
@@ -220,7 +227,7 @@ export function PostDetail({
             placeholder="Write a reply…"
             rows={1}
             style={{ height: "auto", minHeight: "40px" }}
-            className="flex-1 resize-none rounded-xl border border-border bg-gray-100 px-3 py-2.5 text-sm text-ink placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
+            className="min-w-0 flex-1 resize-none rounded-xl border border-border bg-gray-100 px-3 py-2.5 text-sm text-ink placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
           />
           <button
             onClick={handleSend}

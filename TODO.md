@@ -244,3 +244,41 @@ Prioritized build order for MVP. Work top to bottom — each phase builds on the
 - [ ] PWA / Add to Home Screen
 - [ ] Native app (React Native)
 - [ ] Monetization strategy for larger/organizational groups
+
+---
+
+## User Feedback — Logged 2026-03-08
+
+Items noted during live testing. Not yet prioritized or scoped.
+
+### Groups / UI
+- [ ] Cover photo for groups — need an uploader during group setup (and later in edit flow)
+- [ ] Admin: ability to edit group info and cover photo after creation
+- [ ] Move description into main group content area — out of the hero header
+- [ ] Remove emojis everywhere (group type emoji in hero, etc.)
+- [ ] Bottom nav visible even when inside a group (remove auto-hide behavior, or make it a setting)
+- [ ] Explore different card design for group dashboard items
+- [ ] Tapping on someone's name/avatar links to their profile page
+- [ ] Move activity indicator on group cards to top-left corner
+- [ ] Remove the + button from the bottom nav
+- [ ] Remove "Start a group" button from the sign-in / onboarding screen
+
+### Board / Posts
+- [ ] New post FAB icon — update PenLine to a different icon
+- [ ] New post composer — show upload progress indicator while image uploads
+- [ ] New post composer — show a thumbnail preview of the attached photo before posting
+- [ ] Tapping a post image should open it full-size (lightbox)
+
+### Topics / Meetings
+- [ ] Ability to add a photo to a topic when creating a meeting (topic image in meeting setup)
+- [ ] Stack "Publish meeting" and "Save as draft" buttons (currently side-by-side, awkward on mobile)
+- [ ] Display the selected topic on the meeting card on the group dashboard
+
+### Bring List
+- [ ] Display the claimer's profile image alongside their name when they claim an item
+
+### Meetings
+- [ ] Admin: ability to edit a meeting after it's been created/published
+
+### Chat
+- [ ] Chat should support individual direct messages between members (separate from group chat)

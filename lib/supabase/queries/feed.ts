@@ -119,7 +119,7 @@ export async function getFeedItems(): Promise<FeedItem[]> {
       groupType: group.group_type as GroupType,
       title: topic.title,
       subtitle: group.name,
-      href: `/group/${topic.group_id}`,
+      href: `/group/${topic.group_id}/topics`,
       sortKey: topic.nominated_at,
     });
   }

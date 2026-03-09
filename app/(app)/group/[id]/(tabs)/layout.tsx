@@ -51,7 +51,10 @@ export default async function GroupTabLayout({
 
       {/* ── White sheet with tabs ────────────────────────────────── */}
       <div className="-mx-4 -mt-5 flex-1 rounded-t-3xl bg-background">
-        <GroupTabs groupId={id} />
+        {/* Tabs sticky below app header (top-14 = 56px) */}
+        <div className="sticky top-14 z-20 rounded-t-3xl bg-background">
+          <GroupTabs groupId={id} />
+        </div>
         <div className="px-4 py-6">{children}</div>
       </div>
     </div>
