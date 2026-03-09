@@ -49,7 +49,7 @@ function NavItem({ tab, pathname }: { tab: NavTab; pathname: string }) {
   const inner = (
     <div
       className={cn(
-        "flex flex-col items-center gap-1 rounded-xl px-4 py-1.5 transition-colors",
+        "flex flex-col items-center gap-1 rounded-full px-4 py-2.5 transition-colors",
         isActive
           ? "bg-secondary text-primary"
           : "text-muted-foreground"
