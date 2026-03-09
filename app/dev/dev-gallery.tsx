@@ -90,6 +90,17 @@ export function DevGallery() {
           </div>
         </Section>
 
+        <Section title="Color Scale — Brand Splash">
+          <div className="flex flex-wrap gap-5">
+            <Swatch label="purple-rich" bg="purple-rich" />
+            <Swatch label="purple-slate" bg="purple-slate" />
+            <Swatch label="purple-haze" bg="purple-haze" />
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Used on the splash / login screen. <code className="rounded bg-muted px-1 py-0.5 font-mono">purple-rich</code> = CTA buttons &amp; actions · <code className="rounded bg-muted px-1 py-0.5 font-mono">purple-slate</code> = upper bg · <code className="rounded bg-muted px-1 py-0.5 font-mono">purple-haze</code> = lower panel
+          </p>
+        </Section>
+
         <Section title="Color Scale — Accent &amp; Status">
           <div className="flex flex-wrap gap-5">
             <Swatch label="glow" bg="glow" />
@@ -160,6 +171,25 @@ export function DevGallery() {
           <div className="flex flex-wrap gap-3">
             <Button>Normal</Button>
             <Button disabled>Disabled</Button>
+          </div>
+        </Section>
+
+        <Section title="Button — Splash Pattern (Primary / Secondary)">
+          <p className="text-xs text-muted-foreground -mt-1 mb-3">
+            Used on the login splash screen. These are plain <code className="rounded bg-muted px-1 py-0.5 font-mono">&lt;button&gt;</code> elements styled inline — not the shadcn Button component.
+          </p>
+          {/* Shown on the haze background to match real context */}
+          <div className="rounded-2xl bg-purple-haze p-5 flex flex-col gap-3">
+            <button className="h-14 w-full rounded-[20px] bg-purple-rich text-base font-semibold text-white transition-opacity active:opacity-80">
+              Create Account
+            </button>
+            <button className="h-14 w-full rounded-[20px] border border-purple-rich text-base font-semibold text-purple-rich transition-opacity active:opacity-80">
+              Sign In
+            </button>
+          </div>
+          <div className="mt-3 space-y-1 text-xs text-muted-foreground">
+            <p><strong>Primary:</strong> <code className="rounded bg-muted px-1 py-0.5 font-mono">bg-purple-rich text-white rounded-[20px] h-14</code></p>
+            <p><strong>Secondary:</strong> <code className="rounded bg-muted px-1 py-0.5 font-mono">border border-purple-rich text-purple-rich rounded-[20px] h-14</code></p>
           </div>
         </Section>
 
