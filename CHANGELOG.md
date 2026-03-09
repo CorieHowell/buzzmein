@@ -9,6 +9,26 @@ Versions: [Semantic Versioning](https://semver.org/)
 
 ## [Unreleased]
 
+### Added — 2026-03-09 (member management: join approval, remove & block)
+
+- **Migration `011_join_approval.sql`** — adds `join_mode` column to `groups` (`open` | `approval_required`); new `group_join_requests` table with status (`pending` | `approved` | `rejected` | `blocked`), unique `(group_id, user_id)` constraint, and RLS; updates `lookup_group_by_invite_code` RPC to expose `join_mode`
+- **Join mode toggle** (`components/group/join-mode-toggle.tsx`) — admin-only client component; optimistic UI switching between "Anyone with the link" and "Approval required"; calls `updateJoinMode` server action
+- **Remove member button** (`components/group/remove-member-button.tsx`) — admin-only client component with inline two-step confirm; optional "Block from re-joining" checkbox; calls `removeMember` server action
+- **Join page redesign** (`app/join/[code]/page.tsx`) — now fully public (no auth redirect before showing group info); cover image or emoji hero, group name/description, member count, group type, started date, approval badge; context-aware sticky CTA: not logged in → create account + sign in links, open group → "Join group", approval required → "Request to join", pending → waiting pill, blocked → can't join pill
+- **`requestToJoin` action** — inserts pending join request; blocks if user was previously blocked; page stays, revalidates to show pending state
+- **`approveJoinRequest` action** — admin inserts member + marks request approved; revalidates members page
+- **`rejectJoinRequest` action** — admin marks request rejected; user can re-request later
+- **`removeMember` action** — admin deletes member; optional upsert of `blocked` status in `group_join_requests`
+- **`updateJoinMode` action** — admin toggles group `join_mode`; revalidates members page
+- **`getPendingJoinRequests` query** — admin-only; returns pending requests with profile data, ordered by `requested_at`
+- **`getMyJoinRequest` query** — current user's existing request for a group (any status)
+
+### Changed — 2026-03-09 (member management)
+
+- **Members page** (`app/(app)/group/[id]/members/page.tsx`) — admins now see: join settings section with `JoinModeToggle`; pending requests section (only shown when `join_mode=approval_required` and requests exist) with Approve/Decline buttons; remove button per member row (hidden for self); "(you)" label on own row
+- **`joinGroup` action** — now checks for blocked status before inserting; throws if user was blocked from this group
+- **`app/actions/groups.ts`** — fixed import: `revalidatePath` moved from `next/navigation` to `next/cache`
+
 ### Added — 2026-03-08 (branding, PWA, icons)
 
 - **PWA manifest** (`app/manifest.ts`) — `display: standalone`, `start_url: "/"`, portrait orientation, brand colors, icon references; enables full-screen mode when added to iOS/Android home screen

@@ -31,6 +31,8 @@ Prioritized build order for MVP. Work top to bottom — each phase builds on the
 - [x] `leaveGroup` server action (guards single-admin edge case)
 - [x] `LeaveGroupButton` client component with inline confirm
 - [x] Members list page (`/group/[id]/members`)
+- [x] Join approval mode — admin toggle (open / approval required); pending requests section on members page; approve/decline buttons; join page context-aware CTA
+- [x] Remove member — admin remove with inline confirm; optional block from re-joining checkbox
 - [x] Topic backlog — `getBacklogTopics`, `suggestBacklogTopic`, `promoteBacklogTopic`, `deleteBacklogTopic`
 - [x] `BacklogSection` client component on group home tab
 - [x] DB migrations 004, 005, 006 written (need to be applied via SQL Editor)
