@@ -32,19 +32,36 @@ function formatMemberSince(isoDate: string): string {
 export default async function DashboardPage() {
   const memberships = await getUserGroups();
 
-  // Find groups with messages in the past 48 h (activity indicator)
   const groupIds = memberships.map((m) => (m.groups as Group).id);
   let activeGroupIds = new Set<string>();
+  // Groups where the current admin has pending join requests waiting
+  let pendingGroupIds = new Set<string>();
 
   if (groupIds.length > 0) {
     const supabase = await createClient();
+
+    // Activity dot: groups with messages in the past 48 h
     const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
-    const { data } = await supabase
+    const { data: recentMessages } = await supabase
       .from("messages")
       .select("group_id")
       .in("group_id", groupIds)
       .gt("created_at", cutoff);
-    activeGroupIds = new Set((data ?? []).map((r) => r.group_id));
+    activeGroupIds = new Set((recentMessages ?? []).map((r) => r.group_id));
+
+    // Pending dot: admin groups with unresolved join requests
+    const adminGroupIds = memberships
+      .filter((m) => m.role === "admin")
+      .map((m) => (m.groups as Group).id);
+
+    if (adminGroupIds.length > 0) {
+      const { data: pendingRows } = await supabase
+        .from("group_join_requests")
+        .select("group_id")
+        .in("group_id", adminGroupIds)
+        .eq("status", "pending");
+      pendingGroupIds = new Set((pendingRows ?? []).map((r) => r.group_id));
+    }
   }
 
   return (
@@ -59,6 +76,7 @@ export default async function DashboardPage() {
             const group = m.groups as Group;
             const isAdmin = m.role === "admin";
             const hasActivity = activeGroupIds.has(group.id);
+            const hasPending = pendingGroupIds.has(group.id);
             const Icon = GROUP_TYPE_ICONS[group.group_type as GroupType];
 
             return (
@@ -67,12 +85,12 @@ export default async function DashboardPage() {
                 href={`/group/${group.id}`}
                 className="flex items-center gap-4 rounded-xl bg-gray-100 p-4 transition-all active:scale-[0.99]"
               >
-                {/* Icon with activity dot on its border */}
+                {/* Icon with activity / pending dot */}
                 <div className="relative shrink-0">
                   <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white">
                     <Icon size={22} strokeWidth={1.5} className="text-ink/60" />
                   </div>
-                  {hasActivity && (
+                  {(hasActivity || hasPending) && (
                     <span className="absolute right-0 top-0 h-3 w-3 rounded-full bg-primary ring-2 ring-gray-100" />
                   )}
                 </div>
@@ -82,9 +100,15 @@ export default async function DashboardPage() {
                   <p className="font-semibold text-ink leading-snug">
                     {group.name}
                   </p>
-                  <p className="mt-1 text-xs text-muted-foreground/60">
-                    Member since {formatMemberSince(m.joined_at)}
-                  </p>
+                  {hasPending ? (
+                    <p className="mt-1 text-xs font-medium text-primary">
+                      Pending join requests
+                    </p>
+                  ) : (
+                    <p className="mt-1 text-xs text-muted-foreground/60">
+                      Member since {formatMemberSince(m.joined_at)}
+                    </p>
+                  )}
                 </div>
 
                 {/* Admin badge */}

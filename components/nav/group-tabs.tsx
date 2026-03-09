@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Info, Calendar, MessageCircle } from "lucide-react";
+import { Info, Calendar, MessageCircle, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
 
 interface GroupTabsProps {
   groupId: string;
+  /** Number of pending join requests — shows badge on Members tab for admins */
+  pendingCount?: number;
 }
 
 const TABS: {
@@ -15,7 +17,6 @@ const TABS: {
   Icon: LucideIcon;
   href: (id: string) => string;
   isActive: (pathname: string, href: string) => boolean;
-  /** Extra classes applied to the icon wrapper when active + filled */
   activeIconWrapClass?: string;
 }[] = [
   {
@@ -23,7 +24,6 @@ const TABS: {
     Icon: Info,
     href: (id) => `/group/${id}`,
     isActive: (pathname, href) => pathname === href,
-    // The filled Info circle is all-purple — make inner strokes white so the "i" shows
     activeIconWrapClass: "[&_path]:stroke-white [&_line]:stroke-white",
   },
   {
@@ -38,9 +38,15 @@ const TABS: {
     href: (id) => `/group/${id}/chat`,
     isActive: (pathname, href) => pathname.startsWith(href),
   },
+  {
+    label: "Members",
+    Icon: Users,
+    href: (id) => `/group/${id}/members`,
+    isActive: (pathname, href) => pathname.startsWith(href),
+  },
 ];
 
-export function GroupTabs({ groupId }: GroupTabsProps) {
+export function GroupTabs({ groupId, pendingCount = 0 }: GroupTabsProps) {
   const pathname = usePathname();
 
   return (
@@ -48,6 +54,7 @@ export function GroupTabs({ groupId }: GroupTabsProps) {
       {TABS.map((tab) => {
         const href = tab.href(groupId);
         const active = tab.isActive(pathname, href);
+        const showBadge = tab.label === "Members" && pendingCount > 0;
 
         return (
           <Link
@@ -60,14 +67,22 @@ export function GroupTabs({ groupId }: GroupTabsProps) {
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
-            <span className={cn(active ? tab.activeIconWrapClass : undefined)}>
-              <tab.Icon
-                size={18}
-                strokeWidth={active ? 2 : 1.5}
-                fill={active ? "currentColor" : "none"}
-                aria-hidden
-              />
-            </span>
+            {/* Icon with optional pending badge */}
+            <div className="relative">
+              <span className={cn(active ? tab.activeIconWrapClass : undefined)}>
+                <tab.Icon
+                  size={18}
+                  strokeWidth={active ? 2 : 1.5}
+                  fill={active ? "currentColor" : "none"}
+                  aria-hidden
+                />
+              </span>
+              {showBadge && (
+                <span className="absolute -top-2 -right-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-0.5 text-[9px] font-bold leading-none text-white">
+                  {pendingCount > 9 ? "9+" : pendingCount}
+                </span>
+              )}
+            </div>
             <span
               className={cn(
                 "text-[10px] leading-none tracking-wide",

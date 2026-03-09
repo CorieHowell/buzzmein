@@ -1,5 +1,4 @@
 import { notFound, redirect } from "next/navigation";
-import Link from "next/link";
 import { Clock } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -65,35 +64,20 @@ export default async function MembersPage({
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Back link */}
+      {/* Page heading with pending count hint */}
       <div>
-        <Link
-          href={`/group/${id}`}
-          className="text-sm text-muted-foreground hover:text-ink transition-colors"
-        >
-          ← {group.name}
-        </Link>
-      </div>
-
-      <div>
-        <h1 className="text-2xl font-bold text-ink">Members</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           {members.length} {members.length === 1 ? "person" : "people"} in this group
+          {isAdmin && pendingRequests.length > 0 && (
+            <span className="ml-2 font-semibold text-primary">
+              · {pendingRequests.length} pending
+            </span>
+          )}
         </p>
       </div>
 
-      {/* ── Join settings (admin only) ──────────────────────────────── */}
-      {isAdmin && (
-        <section className="flex flex-col gap-2">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Join settings
-          </h2>
-          <JoinModeToggle groupId={id} initialMode={joinMode} />
-        </section>
-      )}
-
-      {/* ── Pending requests (admin only, approval mode, non-empty) ─── */}
-      {isAdmin && joinMode === "approval_required" && pendingRequests.length > 0 && (
+      {/* ── Pending requests (admin only, non-empty) ─────────────────── */}
+      {isAdmin && pendingRequests.length > 0 && (
         <section className="flex flex-col gap-2">
           <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Pending requests ({pendingRequests.length})
@@ -151,6 +135,16 @@ export default async function MembersPage({
               );
             })}
           </div>
+        </section>
+      )}
+
+      {/* ── Join settings (admin only) ──────────────────────────────── */}
+      {isAdmin && (
+        <section className="flex flex-col gap-2">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Join settings
+          </h2>
+          <JoinModeToggle groupId={id} initialMode={joinMode} />
         </section>
       )}
 
@@ -242,7 +236,6 @@ export default async function MembersPage({
                           </span>
                         )}
                       </p>
-
                     </div>
                     <span className="text-xs text-muted-foreground shrink-0">
                       Joined {formatJoinedDate(m.joined_at)}
