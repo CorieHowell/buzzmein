@@ -34,31 +34,34 @@ export default function ForgotPasswordPage() {
 
   if (sent) {
     return (
-      <div className="flex w-full max-w-sm flex-col items-center gap-6 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-glow-pale text-3xl">
-          📬
+      <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4 py-16">
+        <div className="flex w-full max-w-sm flex-col items-center gap-6 text-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-glow-pale text-3xl">
+            📬
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold text-ink">Check your email</h1>
+            <p className="text-muted-foreground">
+              We sent a reset link to{" "}
+              <span className="font-semibold text-ink">{email}</span>
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Click the link to set a new password.
+            </p>
+          </div>
+          <Link
+            href="/login"
+            className="text-sm text-muted-foreground hover:text-ink transition-colors"
+          >
+            Back to sign in
+          </Link>
         </div>
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold text-ink">Check your email</h1>
-          <p className="text-muted-foreground">
-            We sent a reset link to{" "}
-            <span className="font-semibold text-ink">{email}</span>
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Click the link to set a new password.
-          </p>
-        </div>
-        <Link
-          href="/login"
-          className="text-sm text-muted-foreground hover:text-ink transition-colors"
-        >
-          Back to sign in
-        </Link>
       </div>
     );
   }
 
   return (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4 py-16">
     <div className="flex w-full max-w-sm flex-col gap-8">
       <div className="text-center">
         <div className="mb-3 text-4xl">🔐</div>
@@ -92,6 +95,7 @@ export default function ForgotPasswordPage() {
           Back to sign in
         </Link>
       </div>
+    </div>
     </div>
   );
 }

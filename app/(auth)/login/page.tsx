@@ -3,15 +3,16 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-type Mode = "signin" | "signup";
+type Mode = "splash" | "signin" | "signup";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [mode, setMode] = useState<Mode>("signin");
+  const [mode, setMode] = useState<Mode>("splash");
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,9 +30,11 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-      setError(error.message === "Invalid login credentials"
-        ? "Wrong email or password. Try again."
-        : error.message);
+      setError(
+        error.message === "Invalid login credentials"
+          ? "Wrong email or password. Try again."
+          : error.message
+      );
       setLoading(false);
       return;
     }
@@ -73,51 +76,85 @@ export default function LoginPage() {
     router.push("/home");
   }
 
-  function switchMode(next: Mode) {
+  function goTo(next: Mode) {
     setMode(next);
     setError(null);
     setPassword("");
     setConfirmPassword("");
   }
 
+  // ── Splash ──────────────────────────────────────────────────────────────────
+  if (mode === "splash") {
+    return (
+      <div className="relative flex min-h-svh flex-col overflow-hidden bg-deep">
+        {/* Logo */}
+        <div className="flex-shrink-0 px-8 pt-16">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/BuzzLogo.svg"
+            alt="Buzz Me In"
+            className="w-64"
+            draggable={false}
+          />
+        </div>
+
+        {/* Illustration — bottom-aligned, fills remaining space */}
+        <div className="flex flex-1 items-end overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/BuzzFriends1.svg"
+            alt=""
+            aria-hidden="true"
+            className="w-full select-none"
+            draggable={false}
+          />
+        </div>
+
+        {/* Buttons */}
+        <div
+          className="flex-shrink-0 flex flex-col gap-3 px-6 pb-10"
+          style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 2.5rem)" }}
+        >
+          <button
+            onClick={() => goTo("signup")}
+            className="h-14 w-full rounded-[20px] bg-[oklch(0.15_0.08_289)] text-base font-semibold text-white transition-opacity active:opacity-80"
+          >
+            Create Account
+          </button>
+          <button
+            onClick={() => goTo("signin")}
+            className="h-14 w-full rounded-[20px] border border-white/25 text-base font-semibold text-white transition-opacity active:opacity-80"
+          >
+            Sign In
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Sign In / Sign Up ────────────────────────────────────────────────────────
   return (
-    <div className="flex w-full max-w-sm flex-col gap-8">
-      {/* Brand */}
-      <div className="text-center">
-        <div className="mb-3 text-4xl">🔔</div>
-        <h1 className="text-3xl font-bold text-ink">Buzz Me In</h1>
-        <p className="mt-2 text-muted-foreground">
-          {mode === "signin" ? "Welcome back" : "Create your account"}
-        </p>
-      </div>
+    <div className="flex min-h-svh flex-col bg-white px-6 pt-14 pb-10">
+      {/* Back button */}
+      <button
+        onClick={() => goTo("splash")}
+        className="mb-8 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink transition-colors"
+      >
+        <ArrowLeft size={16} strokeWidth={1.5} />
+        Back
+      </button>
 
-      {/* Mode toggle */}
-      <div className="flex rounded-full bg-muted p-1 text-sm font-medium">
-        <button
-          type="button"
-          onClick={() => switchMode("signin")}
-          className={`flex-1 rounded-full py-2 transition-colors ${
-            mode === "signin"
-              ? "bg-white text-ink shadow-sm"
-              : "text-muted-foreground hover:text-ink"
-          }`}
-        >
-          Sign in
-        </button>
-        <button
-          type="button"
-          onClick={() => switchMode("signup")}
-          className={`flex-1 rounded-full py-2 transition-colors ${
-            mode === "signup"
-              ? "bg-white text-ink shadow-sm"
-              : "text-muted-foreground hover:text-ink"
-          }`}
-        >
-          Sign up
-        </button>
-      </div>
+      {/* Heading */}
+      <h1 className="text-2xl font-bold text-ink">
+        {mode === "signin" ? "Welcome back" : "Create your account"}
+      </h1>
+      <p className="mt-1 mb-8 text-sm text-muted-foreground">
+        {mode === "signin"
+          ? "Sign in to your Buzz Me In account."
+          : "Join a group and start buzzing."}
+      </p>
 
-      {/* Form */}
+      {/* Forms */}
       {mode === "signin" ? (
         <form onSubmit={handleSignIn} className="flex flex-col gap-3">
           <Input
@@ -198,8 +235,10 @@ export default function LoginPage() {
         </form>
       )}
 
-      <p className="text-center text-xs text-muted-foreground">
-        By signing up you agree to our terms of service and privacy policy.
+      <p className="mt-6 text-center text-xs text-muted-foreground">
+        By signing up you agree to our{" "}
+        <span className="text-ink">terms of service</span> and{" "}
+        <span className="text-ink">privacy policy</span>.
       </p>
     </div>
   );

@@ -39,6 +39,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4 py-16">
     <div className="flex w-full max-w-sm flex-col gap-8">
       <div className="text-center">
         <div className="mb-3 text-4xl">🔑</div>
@@ -73,6 +74,7 @@ export default function ResetPasswordPage() {
           {loading ? "Saving…" : "Set new password"}
         </Button>
       </form>
+    </div>
     </div>
   );
 }

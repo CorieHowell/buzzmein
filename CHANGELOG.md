@@ -9,6 +9,17 @@ Versions: [Semantic Versioning](https://semver.org/)
 
 ## [Unreleased]
 
+### Added
+- **Splash screen** (`app/(auth)/login/page.tsx`) — full-screen purple landing page with `BuzzLogo.svg` logo and `BuzzFriends1.svg` illustration; replaces the old sign-in/sign-up toggle as the initial auth view
+- `public/BuzzLogo.svg` — wordmark logo asset
+- `public/BuzzFriends1.svg` — friends walking illustration asset
+
+### Changed
+- **Login page state machine** — now has 3 states: `splash → signin` and `splash → signup`; tapping back on either form returns to the splash
+- **Auth layout** (`app/(auth)/layout.tsx`) — changed to bare pass-through; each auth page now owns its own background/centering
+- **Forgot-password page** / **reset-password page** — added own centering wrappers (`flex min-h-screen items-center justify-center bg-white`) to compensate for layout change
+- **Button border radius** (`components/ui/button.tsx`) — changed from `rounded-full` to `rounded-[20px]` globally across all Button instances
+
 ### Fixed
 
 - **Vote card href** (`lib/supabase/queries/feed.ts`) — `vote_needed` feed items now link to `/group/[id]/topics` instead of the group home tab so tapping them lands on the voting UI
