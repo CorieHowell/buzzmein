@@ -29,6 +29,16 @@ export const metadata: Metadata = {
     icon: "/favicon.png",
     apple: "/apple-touch-icon.png",
   },
+  // OG / social sharing
+  openGraph: {
+    title: "Buzz Me In",
+    description: "Get your crew together.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/og-image.png"],
+  },
   // iOS "Add to Home Screen" standalone mode
   appleWebApp: {
     capable: true,
