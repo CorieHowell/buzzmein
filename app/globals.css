@@ -174,10 +174,10 @@
   --color-glow-warm:  var(--glow-warm);
   --color-glow-pale:  var(--glow-pale);
 
-  /* Splash / brand purples */
-  --color-purple-rich:  var(--purple-rich);
-  --color-purple-slate: var(--purple-slate);
-  --color-purple-haze:  var(--purple-haze);
+  /* Splash / brand purples — direct values so Tailwind generates utilities reliably */
+  --color-purple-rich:  #352363;
+  --color-purple-slate: #495085;
+  --color-purple-haze:  #8382AD;
 }
 
 @layer base {
