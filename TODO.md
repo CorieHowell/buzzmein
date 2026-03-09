@@ -6,6 +6,53 @@ Prioritized build order for MVP. Work top to bottom — each phase builds on the
 
 ---
 
+## Database Migrations ✅
+
+- [x] `004_profiles_notifications.sql` — applied
+- [x] `005_avatars_storage.sql` — applied
+- [x] `006_topic_backlog.sql` — applied
+- [x] `contact_info_public` re-enabled in `lib/supabase/queries/groups.ts`
+
+---
+
+## Auth + Profile + Group Home + Topic Backlog ✅
+
+- [x] Password-based login — sign in / sign up toggle on single page (replaces magic link)
+- [x] Forgot password page + reset password page + route handler
+- [x] Profile queries (`getProfile`, `getProfileStats`, `getNotificationPreferences`)
+- [x] Profile actions (`updateProfile`, `updateAvatarUrl`, `upsertNotificationPref`)
+- [x] Reusable `<Avatar>` component — photo or initials fallback, 5 sizes
+- [x] Avatar upload component — uploads to `avatars/{userId}/` bucket
+- [x] Notification toggle client component
+- [x] Profile edit form — display name, username, phone, state dropdown, contact toggle
+- [x] Profile page rebuilt — avatar upload, stats pills, edit form, 8 notification toggles
+- [x] Group home — stacked member avatar row (up to 19 + overflow)
+- [x] Group home — admin card with contact link
+- [x] `leaveGroup` server action (guards single-admin edge case)
+- [x] `LeaveGroupButton` client component with inline confirm
+- [x] Members list page (`/group/[id]/members`)
+- [x] Topic backlog — `getBacklogTopics`, `suggestBacklogTopic`, `promoteBacklogTopic`, `deleteBacklogTopic`
+- [x] `BacklogSection` client component on group home tab
+- [x] DB migrations 004, 005, 006 written (need to be applied via SQL Editor)
+
+---
+
+## UI Modernization + Information Architecture ✅
+
+- [x] Pill buttons — `rounded-full`, `font-semibold`, bumped heights
+- [x] White auth screens — auth layout background changed from `bg-deep` to `bg-white`
+- [x] Card-less login page — bell emoji + wordmark, clean form, glow-pale sent state
+- [x] Fix Tailwind v4 CSS variable pattern — `@theme inline` uses `var()` refs, not direct OKLCH
+- [x] Group page Insight Timer-style layout — full-bleed deep purple hero + white rounded sheet
+- [x] Group `(tabs)` route group — scopes hero+tabs layout to Home/Meetings/Chat; wizard pages unaffected
+- [x] `GroupTabs` client component — `usePathname` active detection, 3 inline tabs
+- [x] `BottomNav` component — 4 tabs (Groups / Meetings / Chat / Profile), auto-hides inside `/group/*`
+- [x] Profile page — user email + sign out (moved from app header)
+- [x] App header — sign out removed; wordmark only
+- [x] Chat tab placeholder — "Chat is coming soon" (Phase 7 will build this out)
+
+---
+
 ## Phase 0 — Project Setup
 
 - [ ] Initialize Next.js 14 project (`npx create-next-app@latest`)
@@ -87,48 +134,53 @@ Prioritized build order for MVP. Work top to bottom — each phase builds on the
 
 ---
 
-## Phase 5 — Meeting Scheduling
+## Phase 5 — Meeting Scheduling ✅
 
-- [ ] Build meeting creation (admin only)
-  - [ ] Title, location, virtual link, host fields
-  - [ ] Option to link to current topic
-- [ ] Build availability poll (`/meetings/[id]/schedule`)
-  - [ ] Admin proposes time slots (date + time picker, add multiple)
-  - [ ] Members respond: yes / no / maybe per slot
-  - [ ] Results grid — color coded per response per slot
-  - [ ] "Best time" suggestion highlighted automatically
-- [ ] Admin: confirm a time slot
-  - [ ] Updates `meetings.scheduled_at` + status to `confirmed`
-  - [ ] Triggers confirmation email to all members
-- [ ] Build confirmed meeting detail page
-  - [ ] Date, time, location, host, linked topic
-  - [ ] RSVP buttons (yes / no / maybe) + optional note field
-  - [ ] Headcount display ("5 coming · 2 maybes · 1 no")
-  - [ ] "Add to Google Calendar" link
-  - [ ] Virtual link "Join" button (visible on meeting day)
-
----
-
-## Phase 6 — Bring List
-
-- [ ] Build bring list section on meeting detail page
-  - [ ] Add item form (text input + submit)
-  - [ ] Unclaimed items list with "I'll bring this" button
-  - [ ] Claimed items show claimer's name + "Release" option
-  - [ ] Group type-aware suggestions (e.g. "Wine, Snacks, Dessert" for book club)
-  - [ ] Real-time updates via Supabase Realtime
+- [x] Build meeting creation (admin only) — 4-step setup wizard (Basics → When → Topic → Bring list)
+  - [x] Title, location, virtual link fields (step 1)
+  - [x] Date or availability poll choice (step 2)
+  - [x] Topic selection or group vote (step 3)
+- [x] Build availability poll (`/meetings/[id]/schedule`)
+  - [x] Admin proposes time slots (date + time picker, add multiple)
+  - [x] Members respond: yes / no / maybe per slot
+  - [x] Results grid — color coded per response per slot
+  - [x] "Best time" suggestion highlighted automatically
+- [x] Admin: confirm a time slot
+  - [x] Updates `meetings.scheduled_at` + status to `confirmed`
+- [x] Build confirmed meeting detail page
+  - [x] Date, time, location, linked topic
+  - [x] RSVP buttons (yes / no / maybe) + optional note field
+  - [x] Headcount display
+  - [x] "Add to Google Calendar" link
+  - [x] Virtual link "Join" button (visible on meeting day)
+- [x] Draft meetings — hidden from non-admins (RLS), admin sees Drafts section in meetings list
 
 ---
 
-## Phase 7 — Group Chat
+## Phase 6 — Bring List ✅
 
-- [ ] Build chat page (`/app/(app)/group/[id]/chat`)
-  - [ ] Message feed (chronological, paginated)
-  - [ ] Message input + send button
-  - [ ] Avatar + display name + timestamp per message
-  - [ ] Scroll-to-bottom on new message
-- [ ] Wire up Supabase Realtime for live updates
-- [ ] Unread indicator on chat nav item
+- [x] Build bring list section on meeting detail page
+  - [x] Add item form (text input + submit)
+  - [x] Unclaimed items list with "I'll bring this" button
+  - [x] Claimed items show claimer's name + "Release" option
+  - [x] Group type-aware suggestions (e.g. "Wine, Snacks, Dessert" for book club)
+  - [x] Real-time updates via Supabase Realtime
+- [x] Bring list pre-fill during meeting setup (step 4 of wizard)
+
+---
+
+## Phase 7 — Group Chat ✅
+
+- [x] Build chat page (`/app/(app)/group/[id]/chat`)
+  - [x] Route + placeholder UI ("coming soon") via `(tabs)/chat/page.tsx`
+  - [x] Message feed (chronological, last 50)
+  - [x] Message input + send button
+  - [x] Avatar + display name per message (collapsed for consecutive same-sender messages)
+  - [x] Timestamp + date dividers
+  - [x] Scroll-to-bottom on new message
+  - [x] Optimistic send
+- [x] Wire up Supabase Realtime for live updates
+- [ ] Unread indicator on chat nav item (post-MVP)
 
 ---
 

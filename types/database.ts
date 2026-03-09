@@ -16,24 +16,69 @@ export type Database = {
         Row: {
           id: string;
           display_name: string;
+          username: string | null;
           avatar_url: string | null;
           email: string;
+          phone: string | null;
+          state: string | null;
+          contact_info_public: boolean;
           created_at: string;
         };
         Insert: {
           id: string;
           display_name: string;
+          username?: string | null;
           avatar_url?: string | null;
           email: string;
+          phone?: string | null;
+          state?: string | null;
+          contact_info_public?: boolean;
           created_at?: string;
         };
         Update: {
           id?: string;
           display_name?: string;
+          username?: string | null;
           avatar_url?: string | null;
           email?: string;
+          phone?: string | null;
+          state?: string | null;
+          contact_info_public?: boolean;
           created_at?: string;
         };
+        Relationships: [];
+      };
+      notification_preferences: {
+        Row: {
+          id: string;
+          user_id: string;
+          notification_type: string;
+          enabled: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          notification_type: string;
+          enabled?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          notification_type?: string;
+          enabled?: boolean;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notification_preferences_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       groups: {
         Row: {
@@ -84,6 +129,15 @@ export type Database = {
           created_by?: string | null;
           created_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "groups_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       group_members: {
         Row: {
@@ -107,6 +161,22 @@ export type Database = {
           role?: "admin" | "member";
           joined_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "group_members_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "groups";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "group_members_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       topics: {
         Row: {
@@ -115,7 +185,7 @@ export type Database = {
           title: string;
           description: string | null;
           cover_url: string | null;
-          status: "nominated" | "current" | "completed";
+          status: "backlog" | "nominated" | "current" | "completed";
           author: string | null;
           page_count: number | null;
           external_id: string | null;
@@ -130,7 +200,7 @@ export type Database = {
           title: string;
           description?: string | null;
           cover_url?: string | null;
-          status?: "nominated" | "current" | "completed";
+          status?: "backlog" | "nominated" | "current" | "completed";
           author?: string | null;
           page_count?: number | null;
           external_id?: string | null;
@@ -145,7 +215,7 @@ export type Database = {
           title?: string;
           description?: string | null;
           cover_url?: string | null;
-          status?: "nominated" | "current" | "completed";
+          status?: "backlog" | "nominated" | "current" | "completed";
           author?: string | null;
           page_count?: number | null;
           external_id?: string | null;
@@ -154,6 +224,22 @@ export type Database = {
           started_at?: string | null;
           completed_at?: string | null;
         };
+        Relationships: [
+          {
+            foreignKeyName: "topics_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "groups";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "topics_nominated_by_fkey";
+            columns: ["nominated_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       topic_votes: {
         Row: {
@@ -174,6 +260,22 @@ export type Database = {
           user_id?: string;
           voted_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "topic_votes_topic_id_fkey";
+            columns: ["topic_id"];
+            isOneToOne: false;
+            referencedRelation: "topics";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "topic_votes_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       meetings: {
         Row: {
@@ -181,11 +283,12 @@ export type Database = {
           group_id: string;
           topic_id: string | null;
           title: string | null;
-          status: "scheduling" | "confirmed" | "completed";
+          status: "draft" | "scheduling" | "confirmed" | "completed";
           location: string | null;
           virtual_link: string | null;
           host_id: string | null;
           scheduled_at: string | null;
+          topic_poll_open: boolean;
           created_at: string;
         };
         Insert: {
@@ -193,11 +296,12 @@ export type Database = {
           group_id: string;
           topic_id?: string | null;
           title?: string | null;
-          status?: "scheduling" | "confirmed" | "completed";
+          status?: "draft" | "scheduling" | "confirmed" | "completed";
           location?: string | null;
           virtual_link?: string | null;
           host_id?: string | null;
           scheduled_at?: string | null;
+          topic_poll_open?: boolean;
           created_at?: string;
         };
         Update: {
@@ -205,13 +309,37 @@ export type Database = {
           group_id?: string;
           topic_id?: string | null;
           title?: string | null;
-          status?: "scheduling" | "confirmed" | "completed";
+          status?: "draft" | "scheduling" | "confirmed" | "completed";
           location?: string | null;
           virtual_link?: string | null;
           host_id?: string | null;
           scheduled_at?: string | null;
+          topic_poll_open?: boolean;
           created_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "meetings_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "groups";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "meetings_topic_id_fkey";
+            columns: ["topic_id"];
+            isOneToOne: false;
+            referencedRelation: "topics";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "meetings_host_id_fkey";
+            columns: ["host_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       availability_slots: {
         Row: {
@@ -232,6 +360,22 @@ export type Database = {
           proposed_at?: string;
           created_by?: string | null;
         };
+        Relationships: [
+          {
+            foreignKeyName: "availability_slots_meeting_id_fkey";
+            columns: ["meeting_id"];
+            isOneToOne: false;
+            referencedRelation: "meetings";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "availability_slots_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       availability_responses: {
         Row: {
@@ -255,6 +399,22 @@ export type Database = {
           response?: "yes" | "no" | "maybe";
           responded_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "availability_responses_slot_id_fkey";
+            columns: ["slot_id"];
+            isOneToOne: false;
+            referencedRelation: "availability_slots";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "availability_responses_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       rsvps: {
         Row: {
@@ -281,6 +441,22 @@ export type Database = {
           note?: string | null;
           responded_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "rsvps_meeting_id_fkey";
+            columns: ["meeting_id"];
+            isOneToOne: false;
+            referencedRelation: "meetings";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "rsvps_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       bring_list_items: {
         Row: {
@@ -307,6 +483,29 @@ export type Database = {
           created_by?: string | null;
           created_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "bring_list_items_meeting_id_fkey";
+            columns: ["meeting_id"];
+            isOneToOne: false;
+            referencedRelation: "meetings";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "bring_list_items_claimed_by_fkey";
+            columns: ["claimed_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "bring_list_items_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       messages: {
         Row: {
@@ -315,6 +514,8 @@ export type Database = {
           user_id: string;
           body: string;
           created_at: string;
+          parent_id: string | null;
+          image_url: string | null;
         };
         Insert: {
           id?: string;
@@ -322,6 +523,8 @@ export type Database = {
           user_id: string;
           body: string;
           created_at?: string;
+          parent_id?: string | null;
+          image_url?: string | null;
         };
         Update: {
           id?: string;
@@ -329,17 +532,42 @@ export type Database = {
           user_id?: string;
           body?: string;
           created_at?: string;
+          parent_id?: string | null;
+          image_url?: string | null;
         };
+        Relationships: [
+          {
+            foreignKeyName: "messages_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "groups";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "messages_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "messages_parent_id_fkey";
+            columns: ["parent_id"];
+            isOneToOne: false;
+            referencedRelation: "messages";
+            referencedColumns: ["id"];
+          }
+        ];
       };
     };
     Views: Record<string, never>;
     Functions: {
       is_group_member: {
-        Args: { group_id: string };
+        Args: { gid: string };
         Returns: boolean;
       };
       is_group_admin: {
-        Args: { group_id: string };
+        Args: { gid: string };
         Returns: boolean;
       };
     };
