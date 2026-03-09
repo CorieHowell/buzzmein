@@ -86,22 +86,26 @@ export default function LoginPage() {
   // ── Splash ──────────────────────────────────────────────────────────────────
   if (mode === "splash") {
     return (
-      <div className="flex min-h-svh flex-col bg-purple-slate">
-        {/* Logo — centered, 50px padding on top / left / right */}
-        <div className="px-[50px] pt-[50px]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/BuzzLogo.svg"
-            alt="Buzz Me In"
-            className="w-full"
-            draggable={false}
-          />
+      // Outer wrapper uses haze so any sub-pixel gap between illustration and
+      // button panel bleeds haze (matching) instead of the darker slate.
+      <div className="flex min-h-svh flex-col bg-purple-haze">
+        {/* Upper section — slate background behind logo + spacer */}
+        <div className="flex flex-1 flex-col bg-purple-slate">
+          {/* Logo — centered, 50px padding on top / left / right */}
+          <div className="px-[50px] pt-[50px]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/BuzzLogo.svg"
+              alt="Buzz Me In"
+              className="w-full"
+              draggable={false}
+            />
+          </div>
+          {/* Spacer — pushes illustration toward the bottom */}
+          <div className="flex-1" />
         </div>
 
-        {/* Spacer — pushes illustration toward the bottom */}
-        <div className="flex-1" />
-
-        {/* Illustration — full width, blends with bg-purple-slate above */}
+        {/* Illustration — full width, sits flush between slate above and haze below */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/BuzzFriends1.svg"
@@ -111,9 +115,9 @@ export default function LoginPage() {
           draggable={false}
         />
 
-        {/* Button panel — lighter purple, 24px below illustration, 16px side padding */}
+        {/* Button panel — 24px below illustration, 16px side padding */}
         <div
-          className="bg-purple-haze px-4 pt-6 flex flex-col gap-3"
+          className="flex flex-col gap-3 px-4 pt-6"
           style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 2.5rem)" }}
         >
           <button
