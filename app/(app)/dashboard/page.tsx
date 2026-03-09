@@ -85,11 +85,20 @@ export default async function DashboardPage() {
                 href={`/group/${group.id}`}
                 className="flex items-center gap-4 rounded-xl bg-gray-100 p-4 transition-all active:scale-[0.99]"
               >
-                {/* Icon with activity / pending dot */}
+                {/* Group image or type icon, with activity / pending dot */}
                 <div className="relative shrink-0">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white">
-                    <Icon size={22} strokeWidth={1.5} className="text-ink/60" />
-                  </div>
+                  {group.cover_image_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={group.cover_image_url}
+                      alt={group.name}
+                      className="h-14 w-14 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white">
+                      <Icon size={22} strokeWidth={1.5} className="text-ink/60" />
+                    </div>
+                  )}
                   {(hasActivity || hasPending) && (
                     <span className="absolute right-0 top-0 h-3 w-3 rounded-full bg-primary ring-2 ring-gray-100" />
                   )}
