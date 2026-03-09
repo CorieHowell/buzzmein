@@ -27,10 +27,10 @@ export function BottomNav() {
 
   return (
     <div
-      className="fixed left-4 right-4 z-50 rounded-2xl border border-border bg-white shadow-lg shadow-black/10"
+      className="fixed left-4 right-4 z-50 rounded-2xl bg-white shadow-[0_4px_24px_rgba(0,0,0,0.07)]"
       style={{ bottom: "max(1rem, calc(env(safe-area-inset-bottom) + 0.5rem))" }}
     >
-      <div className="mx-auto flex max-w-lg items-center justify-around px-2 py-2">
+      <div className="mx-auto flex max-w-lg items-center justify-around px-3 py-3">
         {TABS.map((tab) => (
           <NavItem key={tab.label} tab={tab} pathname={pathname} />
         ))}
@@ -46,42 +46,41 @@ function NavItem({ tab, pathname }: { tab: NavTab; pathname: string }) {
     (pathname === tab.href ||
       (tab.href !== "/" && pathname.startsWith(tab.href!)));
 
-  const content = (
-    <>
+  const inner = (
+    <div
+      className={cn(
+        "flex flex-col items-center gap-1 rounded-xl px-4 py-1.5 transition-colors",
+        isActive
+          ? "bg-secondary text-primary"
+          : "text-muted-foreground"
+      )}
+    >
       <tab.Icon
         size={22}
         strokeWidth={isActive ? 2 : 1.5}
         fill={isActive ? "currentColor" : "none"}
         aria-hidden
       />
-      <span
-        className={cn(
-          "text-[10px] leading-none tracking-wide",
-          isActive ? "font-semibold" : "font-medium"
-        )}
-      >
+      <span className={cn(
+        "text-[10px] leading-none tracking-wide",
+        isActive ? "font-semibold" : "font-medium"
+      )}>
         {tab.label.toUpperCase()}
       </span>
-    </>
+    </div>
   );
 
   if (isDisabled) {
     return (
-      <div className="flex flex-col items-center gap-1.5 px-3 text-muted-foreground/30">
-        {content}
+      <div className="opacity-30">
+        {inner}
       </div>
     );
   }
 
   return (
-    <Link
-      href={tab.href!}
-      className={cn(
-        "flex flex-col items-center gap-1.5 px-3 transition-colors",
-        isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
-      )}
-    >
-      {content}
+    <Link href={tab.href!} className="hover:opacity-80 transition-opacity">
+      {inner}
     </Link>
   );
 }
