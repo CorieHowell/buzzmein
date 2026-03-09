@@ -40,7 +40,7 @@ export default async function GroupHomePage({
     getUserRole(id),
   ]);
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://buzzmein.vercel.app";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://buzzmein.app";
   const inviteUrl = `${baseUrl}/join/${group.invite_code}`;
   const isAdmin = userRole === "admin";
 
