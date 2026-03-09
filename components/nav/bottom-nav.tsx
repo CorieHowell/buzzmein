@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Users, Plus, Calendar, User } from "lucide-react";
+import { Home, Users, Calendar, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
 
@@ -12,15 +12,11 @@ interface NavTab {
   Icon: LucideIcon;
 }
 
-// Two tabs on each side of the centre ⊕ button
-const LEFT_TABS: NavTab[] = [
-  { label: "Home",   href: "/home",      Icon: Home  },
-  { label: "Groups", href: "/dashboard", Icon: Users },
-];
-
-const RIGHT_TABS: NavTab[] = [
-  { label: "Schedule", href: null,       Icon: Calendar },
-  { label: "Profile",  href: "/profile", Icon: User     },
+const TABS: NavTab[] = [
+  { label: "Home",     href: "/home",      Icon: Home     },
+  { label: "Groups",   href: "/dashboard", Icon: Users    },
+  { label: "Schedule", href: null,         Icon: Calendar },
+  { label: "Create",   href: "/group/new", Icon: Plus     },
 ];
 
 export function BottomNav() {
@@ -30,28 +26,14 @@ export function BottomNav() {
   if (pathname.startsWith("/group/")) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-white">
-      <div className="mx-auto flex max-w-lg items-center justify-around px-2 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))]">
-
-        {LEFT_TABS.map((tab) => (
+    <div
+      className="fixed left-4 right-4 z-50 rounded-2xl border border-border bg-white shadow-lg shadow-black/10"
+      style={{ bottom: "max(1rem, calc(env(safe-area-inset-bottom) + 0.5rem))" }}
+    >
+      <div className="mx-auto flex max-w-lg items-center justify-around px-2 py-2">
+        {TABS.map((tab) => (
           <NavItem key={tab.label} tab={tab} pathname={pathname} />
         ))}
-
-        {/* Centre create button */}
-        <Link
-          href="/group/new"
-          aria-label="New group"
-          className="relative -mt-6 flex flex-col items-center gap-1 px-3"
-        >
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-md">
-            <Plus size={26} strokeWidth={2.5} />
-          </div>
-        </Link>
-
-        {RIGHT_TABS.map((tab) => (
-          <NavItem key={tab.label} tab={tab} pathname={pathname} />
-        ))}
-
       </div>
     </div>
   );

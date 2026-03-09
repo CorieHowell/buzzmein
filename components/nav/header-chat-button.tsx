@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MessageCircle } from "lucide-react";
+import { Inbox } from "lucide-react";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -95,7 +95,7 @@ export function HeaderChatButton() {
       className="relative -mr-1.5 p-1.5 text-primary/70 transition-colors hover:text-primary"
       aria-label="Chat"
     >
-      <MessageCircle size={22} strokeWidth={1.5} />
+      <Inbox size={22} strokeWidth={1.5} />
       {hasUnread && (
         <span className="absolute right-1 top-1 h-2.5 w-2.5 rounded-full bg-primary ring-2 ring-white" />
       )}
