@@ -22,8 +22,9 @@ const TABS: NavTab[] = [
 export function BottomNav() {
   const pathname = usePathname();
 
-  // Hidden when inside a group — the group's inline tabs take over
-  if (pathname.startsWith("/group/")) return null;
+  // Hidden when inside a group detail page — the group's inline tabs take over.
+  // /group/new is the create page and keeps the nav visible.
+  if (pathname.startsWith("/group/") && pathname !== "/group/new") return null;
 
   return (
     <div
@@ -79,7 +80,7 @@ function NavItem({ tab, pathname }: { tab: NavTab; pathname: string }) {
   }
 
   return (
-    <Link href={tab.href!} className="hover:opacity-80 transition-opacity">
+    <Link href={tab.href!} className="touch-manipulation active:opacity-70 transition-opacity">
       {inner}
     </Link>
   );
