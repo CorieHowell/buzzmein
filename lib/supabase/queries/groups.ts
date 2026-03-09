@@ -11,6 +11,8 @@ import type { Group, GroupMember } from "@/types";
 // All groups the current user belongs to, with member count
 export async function getUserGroups() {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
 
   const { data, error } = await supabase
     .from("group_members")
@@ -27,6 +29,7 @@ export async function getUserGroups() {
         created_at
       )
     `)
+    .eq("user_id", user.id)
     .order("joined_at", { ascending: false });
 
   if (error) throw error;
@@ -121,11 +124,14 @@ export async function getUserRole(
   groupId: string
 ): Promise<GroupMember["role"] | null> {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
 
   const { data } = await supabase
     .from("group_members")
     .select("role")
     .eq("group_id", groupId)
+    .eq("user_id", user.id)
     .maybeSingle();
 
   return (data?.role as GroupMember["role"]) ?? null;
