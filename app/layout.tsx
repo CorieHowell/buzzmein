@@ -24,6 +24,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "Buzz Me In",
   description: "Get your crew together.",
+  // Icons
+  icons: {
+    icon: "/favicon.png",
+    apple: "/apple-touch-icon.png",
+  },
   // iOS "Add to Home Screen" standalone mode
   appleWebApp: {
     capable: true,
