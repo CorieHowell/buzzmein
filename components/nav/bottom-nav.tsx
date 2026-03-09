@@ -22,9 +22,9 @@ const TABS: NavTab[] = [
 export function BottomNav() {
   const pathname = usePathname();
 
-  // Hidden when inside a group detail page — the group's inline tabs take over.
-  // /group/new is the create page and keeps the nav visible.
-  if (pathname.startsWith("/group/") && pathname !== "/group/new") return null;
+  // Hidden on all /group/* paths — group detail pages use inline tabs,
+  // and wizard pages (/group/new, /group/[id]/setup/*) have their own header nav.
+  if (pathname.startsWith("/group/")) return null;
 
   return (
     <div
