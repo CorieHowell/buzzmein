@@ -124,6 +124,8 @@ export async function joinGroup(groupId: string) {
   // Ignore unique constraint violations (already a member)
   if (error && !error.message.includes("unique")) throw error;
 
+  // Invalidate the dashboard so the router cache reflects the new membership
+  revalidatePath("/dashboard");
   redirect(`/group/${groupId}`);
 }
 

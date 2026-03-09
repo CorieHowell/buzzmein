@@ -33,7 +33,17 @@ export async function getUserGroups() {
     .order("joined_at", { ascending: false });
 
   if (error) throw error;
-  return data ?? [];
+
+  // Deduplicate by group ID — belt-and-suspenders against any RLS / caching edge case
+  // that could cause the same group to appear more than once.
+  const rows = data ?? [];
+  const seen = new Set<string>();
+  return rows.filter((m) => {
+    const g = m.groups as { id: string } | null;
+    if (!g?.id || seen.has(g.id)) return false;
+    seen.add(g.id);
+    return true;
+  });
 }
 
 // Single group by ID (current user must be a member — enforced by RLS)
