@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { generateInviteCode } from "@/lib/utils";
 
 export async function createGroup(formData: FormData) {
@@ -175,8 +176,11 @@ export async function approveJoinRequest(requestId: string, groupId: string, use
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  // Add the user as a member
-  const { error: memberError } = await supabase
+  // Add the applicant as a member using the admin client — the RLS INSERT policy
+  // on group_members only allows auth.uid() = user_id (self-join), so an admin
+  // inserting on behalf of another user requires bypassing RLS here.
+  const adminClient = createAdminClient();
+  const { error: memberError } = await adminClient
     .from("group_members")
     .insert({ group_id: groupId, user_id: userId, role: "member" });
 
