@@ -10,6 +10,8 @@ import {
 import { approveJoinRequest, rejectJoinRequest } from "@/app/actions/groups";
 import { Avatar } from "@/components/ui/avatar";
 import { RemoveMemberButton } from "@/components/group/remove-member-button";
+import { InviteMembersDrawer } from "@/components/group/invite-members-drawer";
+import type { Group } from "@/types";
 
 function formatJoinedDate(isoDate: string): string {
   return new Date(isoDate).toLocaleDateString("en-US", {
@@ -41,9 +43,9 @@ export default async function MembersPage({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  // Verify group exists; throws → notFound() if not (also enforces RLS membership)
+  let group: Group;
   try {
-    await getGroupById(id);
+    group = await getGroupById(id);
   } catch {
     notFound();
   }
@@ -73,7 +75,10 @@ export default async function MembersPage({
         </p>
       </div>
 
-      {/* ── Pending requests (admin only, non-empty) ─────────────────── */}
+      {/* ── Invite members card (any member) ──────────────────────── */}
+      <InviteMembersDrawer inviteCode={group.invite_code} />
+
+      {/* ── Pending requests (admin only, non-empty) ─────────────── */}
       {isAdmin && pendingRequests.length > 0 && (
         <section className="flex flex-col gap-2">
           <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -135,13 +140,13 @@ export default async function MembersPage({
         </section>
       )}
 
-      {/* ── Admins ──────────────────────────────────────────────────── */}
+      {/* ── Admins ───────────────────────────────────────────────── */}
       {admins.length > 0 && (
         <section className="flex flex-col gap-2">
           <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Admins
           </h2>
-          <div className="flex flex-col divide-y divide-border rounded-2xl border bg-card overflow-hidden">
+          <div className="flex flex-col gap-1">
             {admins.map((m) => {
               const profile = Array.isArray(m.profiles)
                 ? m.profiles[0]
@@ -150,8 +155,8 @@ export default async function MembersPage({
               const isMe = profile.id === user.id;
 
               return (
-                <div key={m.id} className="flex flex-col px-4 py-3">
-                  <div className="flex items-center gap-3">
+                <div key={m.id} className="rounded-2xl bg-card overflow-hidden">
+                  <div className="flex items-center gap-3 px-4 py-3">
                     <Avatar
                       src={profile.avatar_url}
                       displayName={profile.display_name}
@@ -160,31 +165,22 @@ export default async function MembersPage({
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-ink truncate">
                         {profile.display_name}
-                        {isMe && (
-                          <span className="ml-1.5 text-xs font-normal text-muted-foreground">
-                            (you)
-                          </span>
-                        )}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Joined {formatJoinedDate(m.joined_at)}
                       </p>
                     </div>
-                    <div className="flex flex-col items-end gap-1">
-                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                        Admin
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        Joined {formatJoinedDate(m.joined_at)}
-                      </span>
-                    </div>
-                  </div>
-                  {isAdmin && !isMe && (
-                    <div className="mt-1 flex justify-end">
+                    <span className="shrink-0 rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-semibold text-yellow-700">
+                      Owner
+                    </span>
+                    {isAdmin && !isMe && (
                       <RemoveMemberButton
                         groupId={id}
                         userId={profile.id}
                         displayName={profile.display_name}
                       />
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               );
             })}
@@ -192,13 +188,13 @@ export default async function MembersPage({
         </section>
       )}
 
-      {/* ── Members ─────────────────────────────────────────────────── */}
+      {/* ── Members ──────────────────────────────────────────────── */}
       {regularMembers.length > 0 && (
         <section className="flex flex-col gap-2">
           <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Members
           </h2>
-          <div className="flex flex-col divide-y divide-border rounded-2xl border bg-card overflow-hidden">
+          <div className="flex flex-col gap-1">
             {regularMembers.map((m) => {
               const profile = Array.isArray(m.profiles)
                 ? m.profiles[0]
@@ -207,8 +203,8 @@ export default async function MembersPage({
               const isMe = profile.id === user.id;
 
               return (
-                <div key={m.id} className="flex flex-col px-4 py-3">
-                  <div className="flex items-center gap-3">
+                <div key={m.id} className="rounded-2xl bg-card overflow-hidden">
+                  <div className="flex items-center gap-3 px-4 py-3">
                     <Avatar
                       src={profile.avatar_url}
                       displayName={profile.display_name}
@@ -217,26 +213,19 @@ export default async function MembersPage({
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-ink truncate">
                         {profile.display_name}
-                        {isMe && (
-                          <span className="ml-1.5 text-xs font-normal text-muted-foreground">
-                            (you)
-                          </span>
-                        )}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Joined {formatJoinedDate(m.joined_at)}
                       </p>
                     </div>
-                    <span className="text-xs text-muted-foreground shrink-0">
-                      Joined {formatJoinedDate(m.joined_at)}
-                    </span>
-                  </div>
-                  {isAdmin && !isMe && (
-                    <div className="mt-1 flex justify-end">
+                    {isAdmin && !isMe && (
                       <RemoveMemberButton
                         groupId={id}
                         userId={profile.id}
                         displayName={profile.display_name}
                       />
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               );
             })}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { X } from "lucide-react";
+import { Trash2, X } from "lucide-react";
 import { removeMember } from "@/app/actions/groups";
 import { cn } from "@/lib/utils";
 
@@ -33,63 +33,96 @@ export function RemoveMemberButton({
     });
   }
 
-  if (!confirming) {
-    return (
-      <button
-        onClick={() => setConfirming(true)}
-        className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-        aria-label={`Remove ${displayName}`}
-      >
-        <X size={13} strokeWidth={2} />
-        Remove
-      </button>
-    );
+  function handleClose() {
+    setConfirming(false);
+    setBlock(false);
+    setError(null);
   }
 
   return (
-    <div className="mt-2 rounded-xl border border-destructive/20 bg-destructive/5 p-3">
-      <p className="text-xs font-medium text-ink">
-        Remove{" "}
-        <span className="font-semibold">{displayName}</span> from this group?
-      </p>
+    <>
+      {/* Trash icon trigger — stays in the flex row */}
+      <button
+        type="button"
+        onClick={() => setConfirming(true)}
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+        aria-label={`Remove ${displayName}`}
+      >
+        <Trash2 size={16} strokeWidth={1.75} />
+      </button>
 
-      {/* Block checkbox */}
-      <label className="mt-2 flex items-center gap-2 cursor-pointer">
-        <input
-          type="checkbox"
-          checked={block}
-          onChange={(e) => setBlock(e.target.checked)}
-          className={cn(
-            "h-4 w-4 rounded border-border accent-destructive",
-            "cursor-pointer"
-          )}
-        />
-        <span className="text-xs text-muted-foreground">
-          Block from re-joining
-        </span>
-      </label>
+      {/* Confirmation bottom sheet */}
+      {confirming && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 z-40 bg-black/40"
+            onClick={handleClose}
+          />
 
-      {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
+          {/* Sheet */}
+          <div
+            className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl bg-background px-6 pt-5"
+            style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 1.5rem)" }}
+          >
+            {/* Handle */}
+            <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-border" />
 
-      <div className="mt-3 flex gap-2">
-        <button
-          onClick={() => {
-            setConfirming(false);
-            setBlock(false);
-            setError(null);
-          }}
-          className="flex-1 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted/50 transition-colors"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleRemove}
-          disabled={isPending}
-          className="flex-1 rounded-lg bg-destructive px-3 py-1.5 text-xs font-medium text-white hover:bg-destructive/90 transition-colors disabled:opacity-50"
-        >
-          {isPending ? "Removing…" : "Remove"}
-        </button>
-      </div>
-    </div>
+            {/* Header */}
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-base font-semibold text-ink">
+                Remove {displayName}?
+              </h2>
+              <button
+                type="button"
+                onClick={handleClose}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-opacity active:opacity-70"
+              >
+                <X size={16} strokeWidth={2} />
+              </button>
+            </div>
+
+            <p className="mb-4 text-sm text-muted-foreground">
+              They&apos;ll be removed from the group immediately.
+            </p>
+
+            {/* Block checkbox */}
+            <label className="mb-5 flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={block}
+                onChange={(e) => setBlock(e.target.checked)}
+                className={cn(
+                  "h-4 w-4 rounded border-border accent-destructive cursor-pointer"
+                )}
+              />
+              <span className="text-sm text-muted-foreground">
+                Block from re-joining
+              </span>
+            </label>
+
+            {error && <p className="mb-3 text-sm text-destructive">{error}</p>}
+
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={handleClose}
+                className="flex-1 rounded-xl border border-border py-3 text-sm font-medium text-muted-foreground transition-colors active:bg-muted/50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleRemove}
+                disabled={isPending}
+                className="flex-1 rounded-xl bg-destructive py-3 text-sm font-medium text-white transition-opacity disabled:opacity-50 active:opacity-80"
+              >
+                {isPending ? "Removing…" : "Remove"}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </>
   );
 }
