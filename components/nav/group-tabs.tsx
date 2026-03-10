@@ -70,12 +70,14 @@ export function GroupTabs({ groupId, isAdmin = false, pendingCount = 0 }: GroupT
           <Link
             key={tab.label}
             href={href}
+            // touch-manipulation removes the 300 ms iOS double-tap delay
             className={cn(
-              "flex flex-1 flex-col items-center gap-1 py-3 transition-colors",
+              "flex flex-1 flex-col items-center gap-1 py-3 touch-manipulation",
               active
                 ? "border-b-2 border-primary text-primary"
-                : "text-muted-foreground hover:text-foreground"
+                : "text-muted-foreground"
             )}
+            style={{ WebkitTapHighlightColor: "transparent" } as React.CSSProperties}
           >
             {/* Icon with optional pending dot */}
             <div className="relative">

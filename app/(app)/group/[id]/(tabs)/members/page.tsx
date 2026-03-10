@@ -63,18 +63,6 @@ export default async function MembersPage({
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Page heading with pending count hint */}
-      <div>
-        <p className="text-sm text-muted-foreground">
-          {members.length} {members.length === 1 ? "person" : "people"} in this group
-          {isAdmin && pendingRequests.length > 0 && (
-            <span className="ml-2 font-semibold text-primary">
-              · {pendingRequests.length} pending
-            </span>
-          )}
-        </p>
-      </div>
-
       {/* ── Invite members card (any member) ──────────────────────── */}
       <InviteMembersDrawer inviteCode={group.invite_code} />
 
@@ -144,7 +132,7 @@ export default async function MembersPage({
       {admins.length > 0 && (
         <section className="flex flex-col gap-2">
           <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Admins
+            Admins ({admins.length})
           </h2>
           <div className="flex flex-col gap-1">
             {admins.map((m) => {
@@ -192,7 +180,7 @@ export default async function MembersPage({
       {regularMembers.length > 0 && (
         <section className="flex flex-col gap-2">
           <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Members
+            Members ({regularMembers.length})
           </h2>
           <div className="flex flex-col gap-1">
             {regularMembers.map((m) => {
